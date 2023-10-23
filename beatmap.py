@@ -30,7 +30,7 @@ class Beatmap:
 
         for directory in subdirectories:
             if directory.split(' ')[0] == beatmap_id:
-                return directory
+                return f'{songs_directory}\{directory}'
         
         raise KeyError('Beatmap of replay cannot be found in songs directory')
     
