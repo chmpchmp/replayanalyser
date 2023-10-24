@@ -14,7 +14,6 @@ class Beatmap:
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
 
         self.circle_radius = 54.4 - 4.48 * float(self.data['diff_size'])
-        self.circle_radius = 0.8 * (54.4 - 4.48 * float(self.data['diff_size']))
 
         print(self.directory)
     
@@ -55,4 +54,4 @@ class Beatmap:
         raise KeyError('Beatmap file pertaining to the replay file cannot be found')
     
     def fetch_hit_object_data(self, difficulty_data: str) -> str:
-        return [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:]
+        return [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
