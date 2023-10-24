@@ -8,6 +8,9 @@ import pathlib
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
         self.replay_data = self.parse_replay_data(replay_path)
+        self.cursor_data = self.replay_data['byte_array']
+        print(self.cursor_data[:10])
+        print(type(self.cursor_data))
         self.data = self.fetch_beatmap_data(self.replay_data['beatmap_hash'])
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
