@@ -8,19 +8,27 @@ import pathlib
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
         self.replay_data = self.parse_replay_data(replay_path)
-        self.beatmap_data = self.fetch_beatmap_data(self.replay_data['beatmap_hash'])
-        self.beatmap_directory = self.find_beatmap_directory(songs_directory, self.beatmap_data['beatmapset_id'])
-        self.difficulty_data = self.fetch_difficulty_data(self.beatmap_directory, self.beatmap_data['beatmap_id'])
-        
-        print(self.difficulty_data)
+        self.data = self.fetch_beatmap_data(self.replay_data['beatmap_hash'])
+        self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
+        self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
+        self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
+
+        #self.circle_radius = 54.4 - 4.48 * float(self.data['diff_size'])
+        self.circle_radius = 0.5 * (54.4 - 4.48 * float(self.data['diff_size']))
+
+        print(self.data['diff_size'])
+        print(type(self.circle_radius))
+        #print(self.hit_object_data)
+
+        print(self.directory)
     
     def parse_replay_data(self, replay_path: str) -> dict:
         replay_data = Replay(replay_path).decode_replay()
 
-        if replay_data['game_mode'] != 0:
-            raise ValueError('Game mode of the replay file is not osu!standard')
+        if replay_data['game_mode'] == 0:
+            return Replay(replay_path).decode_replay()
         
-        return Replay(replay_path).decode_replay()
+        raise ValueError('Game mode of the replay file is not osu!standard')
 
     def fetch_beatmap_data(self, beatmap_hash: str) -> int:
         load_dotenv()
@@ -50,8 +58,5 @@ class Beatmap:
 
         raise KeyError('Beatmap file pertaining to the replay file cannot be found')
     
-if __name__ == '__main__':
-    replay_path = r'sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr'
-    songs_directory = r'C:\Users\snoop\AppData\Local\osu!\Songs'
-
-    beatmap = Beatmap(replay_path, songs_directory)
+    def fetch_hit_object_data(self, difficulty_data: str) -> str:
+        return [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:]
