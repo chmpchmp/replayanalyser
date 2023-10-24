@@ -13,8 +13,8 @@ class Beatmap:
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
 
-        #self.circle_radius = 54.4 - 4.48 * float(self.data['diff_size'])
-        self.circle_radius = 0.5 * (54.4 - 4.48 * float(self.data['diff_size']))
+        self.circle_radius = 54.4 - 4.48 * float(self.data['diff_size'])
+        self.circle_radius = 0.8 * (54.4 - 4.48 * float(self.data['diff_size']))
 
         print(self.data['diff_size'])
         print(type(self.circle_radius))
