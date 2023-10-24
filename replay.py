@@ -30,10 +30,10 @@ class Replay:
         replay_data['highest_combo'] = self.decode_data('h')
         replay_data['perfect_combo'] = self.decode_data('b')
         replay_data['mods_used'] = self.decode_data('i')
-        replay_data['life_bar_graph'] = self.decode_string().strip(',')    # the string will end with a comma
+        replay_data['life_bar_graph'] = self.decode_string().strip(',').split(',')
         replay_data['time_stamp'] = self.decode_data('q')
         replay_data['byte_length'] = self.decode_data('i')
-        replay_data['byte_array'] = self.decode_lzma(replay_data['byte_length'])    # the string will end with a comma
+        replay_data['byte_array'] = self.decode_lzma(replay_data['byte_length']).split(',')[:-1]
         replay_data['online_score_id'] = self.decode_data('q')
         
         if replay_data['mods_used'] >= 8388608:
