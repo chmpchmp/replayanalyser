@@ -1,14 +1,19 @@
 from beatmap import Beatmap
+
+from dotenv import load_dotenv
+import os
 import turtle
 
 def run():
     replay_path = r'sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr'
-    songs_directory = r'C:\Users\snoop\AppData\Local\osu!\Songs'
+    
+    load_dotenv()
+    songs_directory = os.getenv('osu_songs_directory')
 
     beatmap = Beatmap(replay_path, songs_directory)
 
     draw_playfield()
-    
+
     for x, y, time, type in beatmap.hit_object_data:
         turtle.goto(canvas_x(x), canvas_y(y) - beatmap.circle_radius)
         turtle.pendown()
