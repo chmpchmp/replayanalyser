@@ -16,10 +16,6 @@ class Beatmap:
         self.circle_radius = 54.4 - 4.48 * float(self.data['diff_size'])
         self.circle_radius = 0.8 * (54.4 - 4.48 * float(self.data['diff_size']))
 
-        print(self.data['diff_size'])
-        print(type(self.circle_radius))
-        #print(self.hit_object_data)
-
         print(self.directory)
     
     def parse_replay_data(self, replay_path: str) -> dict:
