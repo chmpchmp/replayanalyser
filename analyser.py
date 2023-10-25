@@ -15,8 +15,9 @@ class Analyser:
         hit_object_data = self.create_hit_object_dictionary()
         
         while True:
-            if ms_interval in hit_object_data.keys():
-                print(hit_object_data[ms_interval])
+            if ms_interval in cursor_data.keys() and ms_interval in hit_object_data.keys():
+                print(ms_interval, cursor_data[ms_interval], hit_object_data[ms_interval])
+                
             if ms_interval == 100000:
                 break
             ms_interval += 1
@@ -25,7 +26,7 @@ class Analyser:
         cursor_dictionary = dict()
         ms_interval = 0
         for point in self.beatmap.replay_data['byte_array']:
-            #ms_interval += int(point.split('|')[0])
+            ms_interval += int(point.split('|')[0])
             cursor_dictionary[ms_interval] = point
 
         return cursor_dictionary
@@ -38,6 +39,7 @@ class Analyser:
 
 if __name__ == '__main__':
     replay_path = r'sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr'
+    replay_path = r'sample_replays\chmpchmp - Dove Cameron - LazyBaby [Hard] (2023-08-06) Osu.osr'
     
     load_dotenv()
     songs_directory = os.getenv('osu_songs_directory')
