@@ -33,10 +33,10 @@ class Replay:
         replay_data['life_bar_graph'] = self.decode_string().strip(',').split(',')
         replay_data['time_stamp'] = self.decode_data('q')
         replay_data['byte_length'] = self.decode_data('i')
-        replay_data['byte_array'] = self.decode_lzma(replay_data['byte_length']).split(',')[:-1]
+        replay_data['byte_array'] = self.decode_lzma(replay_data['byte_length']).split(',')[1:-1]
         replay_data['online_score_id'] = self.decode_data('q')
         
-        if replay_data['mods_used'] >= 8388608:
+        if replay_data['mods_used'] & 8388608 == 8388608:
             replay_data['target_practice_mod'] = self.decode_data('d')
             
         return replay_data
