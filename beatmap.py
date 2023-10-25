@@ -9,14 +9,13 @@ class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
         self.replay_data = self.parse_replay_data(replay_path)
         self.cursor_data = self.replay_data['byte_array']
-        print(self.cursor_data[:10])
-        print(type(self.cursor_data))
         self.data = self.fetch_beatmap_data(self.replay_data['beatmap_hash'])
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
 
-        self.circle_radius = 54.4 - 4.48 * float(self.data['diff_size'])
+        self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']))
+        self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay_data['mods_used']))
 
         print(self.directory)
     
@@ -58,3 +57,15 @@ class Beatmap:
     
     def fetch_hit_object_data(self, difficulty_data: str) -> str:
         return [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
+    
+    def calculate_circle_radius(self, circle_size: float) -> float:
+        return 54.4 - 4.48 * circle_size
+    
+    def calculate_hit_window(self, overall_difficulty: float, mods_used: int) -> float:
+        if mods_used & 64 == 64:     # hit window for double time mod (including nightcore)
+            return (200 - 10 * overall_difficulty) / 1.5
+
+        if mods_used & 256 == 256:    # hit window for half time mod
+            return (200 - 10 * overall_difficulty) * 1.5
+
+        return 200 - 10 * overall_difficulty
