@@ -38,7 +38,7 @@ class Analyser:
         active_cursor_points = []
 
         for i in range(len(cursor_timings)-1):
-            if self.detect_key_press(cursor_timings[i][3], cursor_timings[i+1][3]) and cursor_timings[i+1][0] >= 0:
+            if self.detect_key_press(cursor_timings[i][3], cursor_timings[i+1][3]) and cursor_timings[i+1][0] >= 0 and cursor_timings[i+1][3] != 1058002:
                 active_cursor_points.append(cursor_timings[i+1])
 
         return active_cursor_points
@@ -50,7 +50,7 @@ class Analyser:
 
     def parse_hit_object_data(self, hit_object_data: list(list())):
         return [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data
-                if int(object[3]) & 8 != 8]    # exclude objects that are spinners
+                if int(object[3]) & 8 == 0]    # exclude objects that are spinners
     
     def calculate_valid_cursor_points(self, object_timing: float, hit_window: float, active_cursor_points: dict) -> dict:
         minimum_timing = object_timing - hit_window
@@ -69,6 +69,9 @@ class Analyser:
 
 if __name__ == '__main__':
     replay_path = r'sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr'
+    replay_path = r'sample_replays\chmpchmp - Hana - Sakura no Uta [Euphoria] (2023-01-27) Osu.osr'
+    replay_path = r"sample_replays\chmpchmp - EGOIST - BANG!!! [MIRACLE] (2022-07-12) Osu.osr"
+    replay_path = r"sample_replays\chmpchmp - Dove Cameron - LazyBaby [Hard] (2023-08-06) Osu.osr"
     
     load_dotenv()
     songs_directory = os.getenv('osu_songs_directory')
