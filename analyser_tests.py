@@ -6,7 +6,7 @@ import os
 import unittest
 
 class AnalyserTestMethods(unittest.TestCase):
-    # note: break_count - miss_count = sliderbreak_count
+
     def test_replay_01(self):
         replay_path = r"sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr"
 
