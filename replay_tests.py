@@ -6,7 +6,7 @@ class ReplayTestMethods(unittest.TestCase):
     def test_replay_01(self):
         path = 'sample_replays/chmpchmp - Suzuyu - Euphorium [The Dream Of White Star.] (2022-10-28) Osu.osr'
     
-        replay_data = Replay(path).decode_replay()
+        replay_data = Replay(path).return_json()
 
         self.assertEqual(replay_data['game_mode'], 0)
         self.assertEqual(replay_data['player_name'], 'chmpchmp')
@@ -25,7 +25,7 @@ class ReplayTestMethods(unittest.TestCase):
     def test_replay_02(self):
         path = "sample_replays/chmpchmp - gmtn. (witch's slave) - furioso melodia [Wrath] (2023-05-05) Osu.osr"
     
-        replay_data = Replay(path).decode_replay()
+        replay_data = Replay(path).return_json()
 
         self.assertEqual(replay_data['game_mode'], 0)
         self.assertEqual(replay_data['player_name'], 'chmpchmp')
@@ -44,7 +44,7 @@ class ReplayTestMethods(unittest.TestCase):
     def test_replay_03(self):
         path = "sample_replays/chmpchmp - Dove Cameron - LazyBaby [Hard] (2023-08-06) Osu.osr"
     
-        replay_data = Replay(path).decode_replay()
+        replay_data = Replay(path).return_json()
 
         self.assertEqual(replay_data['game_mode'], 0)
         self.assertEqual(replay_data['player_name'], 'chmpchmp')

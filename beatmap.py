@@ -7,23 +7,23 @@ import pathlib
 
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
-        self.replay_data = self.parse_replay_data(replay_path)
-        self.cursor_data = self.replay_data['byte_array']
-        self.data = self.fetch_beatmap_data(self.replay_data['beatmap_hash'])
+        self.replay = self.parse_replay_data(replay_path)
+        self.cursor_data = self.replay.replay_data
+        self.data = self.fetch_beatmap_data(self.replay.beatmap_hash)
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
 
         self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']))
-        self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay_data['mods_used']))
+        self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used))
 
         self.title = self.create_beatmap_title()
     
     def parse_replay_data(self, replay_path: str) -> dict:
-        replay_data = Replay(replay_path).decode_replay()
+        replay = Replay(replay_path)
 
-        if replay_data['game_mode'] == 0:
-            return Replay(replay_path).decode_replay()
+        if replay.game_mode == 0:
+            return replay
         
         raise ValueError('Game mode of the replay file is not osu!standard')
 
