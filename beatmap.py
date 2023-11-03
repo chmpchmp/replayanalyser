@@ -39,7 +39,7 @@ class Beatmap:
             if directory.split(' ')[0] == beatmapset_id:
                 return f'{songs_directory}\{directory}'
         
-        raise KeyError('Beatmap of replay cannot be found in songs directory')
+        raise KeyError('Beatmap of replay could not be found in songs directory')
     
     def fetch_difficulty_data(self, beatmap_directory: str, beatmap_id: str) -> str:
         for file_name in os.listdir(beatmap_directory):
@@ -53,7 +53,7 @@ class Beatmap:
                     
                 file.close()
 
-        raise KeyError('Beatmap file pertaining to the replay file cannot be found')
+        raise KeyError('Beatmap file pertaining to the replay file could not be found')
     
     def fetch_hit_object_data(self, difficulty_data: str) -> str:
         return [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
