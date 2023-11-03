@@ -46,13 +46,24 @@ class AnalyserTestMethods(unittest.TestCase):
         load_dotenv()
         songs_directory = os.getenv('osu_songs_directory')
 
-        replay = Replay(replay_path)
-        beatmap = Analyser(replay_path, songs_directory)
+        #replay = Replay(replay_path)
+        #beatmap = Analyser(replay_path, songs_directory)
 
         #self.assertEqual(replay.miss_count, beatmap.break_count - 1)
 
     def test_replay_05(self):
         replay_path = r"sample_replays\chmpchmp - RADWIMPS - Zen Zen Zense (movie ver.) [Extra Mitsuha] (2023-09-08) Osu.osr"
+
+        load_dotenv()
+        songs_directory = os.getenv('osu_songs_directory')
+
+        replay = Replay(replay_path)
+        beatmap = Analyser(replay_path, songs_directory)
+
+        self.assertEqual(replay.miss_count, beatmap.break_count)
+
+    def test_replay_06(self):
+        replay_path = r"sample_replays\chmpchmp - 40mP feat. yuikonnu - Ame to Asphalt [Rain] (2023-11-03) Osu.osr"
 
         load_dotenv()
         songs_directory = os.getenv('osu_songs_directory')
