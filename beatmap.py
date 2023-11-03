@@ -14,6 +14,7 @@ class Beatmap:
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
 
+        self.stack_leniency = self.fetch_stack_leniency(self.difficulty_data)
         self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']), int(self.replay.mods_used))
         self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used))
 
@@ -55,9 +56,18 @@ class Beatmap:
 
         raise KeyError('Beatmap file pertaining to the replay file could not be found')
     
-    def fetch_hit_object_data(self, difficulty_data: str) -> str:
-        return [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
+    def fetch_stack_leniency(self, difficulty_data: str) -> float:
+        for line in difficulty_data.split('\n'):
+            if 'StackLeniency: ' in line:
+                return float(line[15:])
+            
+    def fetch_hit_object_data(self, difficulty_data: str) -> list():
+        hit_object_data = [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
+        return hit_object_data
     
+    def calculate_stack_leniency(self, hit_object_data: list(), stack_leniency: float) -> list():
+        return hit_object_data
+
     def calculate_circle_radius(self, circle_size: float, mods_used) -> float:
         if mods_used & 16 == 16:    # circle size for hard rock
             hr_circle_size = 1.3 * circle_size
