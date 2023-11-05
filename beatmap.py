@@ -8,11 +8,11 @@ import pathlib
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
         self.replay = self.parse_replay_data(replay_path)
-        self.cursor_data = self.replay.replay_data
+        self.cursor_data = self.calculate_cursor_timings(self.replay.replay_data)
         self.data = self.fetch_beatmap_data(self.replay.beatmap_hash)
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
-        self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data)
+        self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data, int(self.replay.mods_used))
 
         self.stack_leniency = self.fetch_stack_leniency(self.difficulty_data)
         self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']), int(self.replay.mods_used))
@@ -27,6 +27,18 @@ class Beatmap:
             return replay
         
         raise ValueError('Game mode of the replay file is not osu!standard')
+    
+    def calculate_cursor_timings(self, cursor_data: list(list())) -> list(list()):
+        cursor_timings = []
+        
+        ms_interval = 0
+
+        for point in cursor_data:
+            split_point = point.split('|')
+            ms_interval += int(split_point[0])
+            cursor_timings.append([ms_interval, float(split_point[1]), float(split_point[2]), int(split_point[3])])
+
+        return cursor_timings
 
     def fetch_beatmap_data(self, beatmap_hash: str) -> int:
         load_dotenv()
@@ -61,11 +73,15 @@ class Beatmap:
             if 'StackLeniency: ' in line:
                 return float(line[15:])
             
-    def fetch_hit_object_data(self, difficulty_data: str) -> list():
+    def fetch_hit_object_data(self, difficulty_data: str, mods_used: int) -> list():
         hit_object_data = [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
-        return hit_object_data
-    
-    def calculate_stack_leniency(self, hit_object_data: list(), stack_leniency: float) -> list():
+        hit_object_data = [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data
+                            if int(object[3]) & 8 == 0]    # exclude objects that are spinners
+
+        if mods_used & 16 == 16:    # invert hit objects across x-axis for hard rock
+            for i in range(len(hit_object_data)):
+                hit_object_data[i][1] = 384 - hit_object_data[i][1]
+
         return hit_object_data
 
     def calculate_circle_radius(self, circle_size: float, mods_used) -> float:
