@@ -6,33 +6,29 @@ import os
 class Analyser:
     def __init__(self, replay_path: str, songs_directory: str):
         self.beatmap = Beatmap(replay_path, songs_directory)
+        self.miss_count = 0
+        self.sliderbreak_count = 0
         self.break_count = 0
 
         self.analyze_replay()
 
     def analyze_replay(self):
-        cursor_timings = self.calculate_cursor_timings(self.beatmap.cursor_data)
+        cursor_timings = self.beatmap.cursor_data
         active_cursor_points = self.fetch_active_cursor_points(cursor_timings)
-        hit_object_data = self.parse_hit_object_data(self.beatmap.hit_object_data)
+        hit_object_data = self.beatmap.hit_object_data
 
         for object in hit_object_data:
             valid_cursor_points = self.calculate_valid_cursor_points(object[2], self.beatmap.hit_window, active_cursor_points)
 
             if self.detect_miss(object[0], object[1], self.beatmap.circle_radius, valid_cursor_points):
+                if object[2] & 1 == 1:
+                    self.miss_count += 1
+
+                if object[2] & 2 == 2:
+                    self.sliderbreak_count += 1
+                    
                 self.break_count += 1
-                print("Combo break detected!")
-
-    def calculate_cursor_timings(self, cursor_data: list(list())) -> list(list()):
-        cursor_timings = []
-        
-        ms_interval = 0
-
-        for point in cursor_data:
-            split_point = point.split('|')
-            ms_interval += int(split_point[0])
-            cursor_timings.append([ms_interval, float(split_point[1]), float(split_point[2]), int(split_point[3])])
-
-        return cursor_timings
+                #print("Combo break detected!")
 
     def fetch_active_cursor_points(self, cursor_timings: list(list())) -> list(list()):
         active_cursor_points = []
@@ -47,10 +43,6 @@ class Analyser:
         key_one = (first_input ^ 1) & (second_input & 1) == 1
         key_two = (first_input ^ 2) & (second_input & 2) == 2
         return key_one or key_two
-
-    def parse_hit_object_data(self, hit_object_data: list(list())):
-        return [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data
-                if int(object[3]) & 8 == 0]    # exclude objects that are spinners
     
     def calculate_valid_cursor_points(self, object_timing: float, hit_window: float, active_cursor_points: dict) -> dict:
         minimum_timing = object_timing - hit_window
