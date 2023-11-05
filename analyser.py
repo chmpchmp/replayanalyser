@@ -58,14 +58,3 @@ class Analyser:
 
     def point_in_circle(self, center_x: int, center_y: int, radius: float, point_x: float, point_y: float) -> bool:
         return (point_x - center_x)**2 + (point_y - center_y)**2 < radius**2
-
-if __name__ == '__main__':
-    replay_path = r'sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr'
-    replay_path = r'sample_replays\chmpchmp - Hana - Sakura no Uta [Euphoria] (2023-01-27) Osu.osr'
-    replay_path = r"sample_replays\chmpchmp - EGOIST - BANG!!! [MIRACLE] (2022-07-12) Osu.osr"
-    replay_path = r"sample_replays\chmpchmp - Dove Cameron - LazyBaby [Hard] (2023-08-06) Osu.osr"
-    
-    load_dotenv()
-    songs_directory = os.getenv('osu_songs_directory')
-
-    Analyser(replay_path, songs_directory)
