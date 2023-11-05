@@ -14,9 +14,11 @@ class AnalyserTestMethods(unittest.TestCase):
         songs_directory = os.getenv('osu_songs_directory')
 
         replay = Replay(replay_path)
-        beatmap = Analyser(replay_path, songs_directory)
+        analyser = Analyser(replay_path, songs_directory)
 
-        self.assertEqual(replay.miss_count, beatmap.break_count)
+        self.assertEqual(replay.miss_count, analyser.miss_count, 1)
+        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.break_count, 1)
 
     def test_replay_02(self):
         replay_path = r"sample_replays\chmpchmp - Hana - Sakura no Uta [Euphoria] (2023-01-27) Osu.osr"
@@ -25,9 +27,11 @@ class AnalyserTestMethods(unittest.TestCase):
         songs_directory = os.getenv('osu_songs_directory')
 
         replay = Replay(replay_path)
-        beatmap = Analyser(replay_path, songs_directory)
+        analyser = Analyser(replay_path, songs_directory)
 
-        self.assertEqual(replay.miss_count, beatmap.break_count)
+        self.assertEqual(replay.miss_count, replay.miss_count, 0)
+        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.break_count, 0)
 
     def test_replay_03(self):
         replay_path = r"sample_replays\chmpchmp - ClariS - Hitorigoto -TV MIX- [Soliloquy] (2023-10-31) Osu.osr"
@@ -36,31 +40,37 @@ class AnalyserTestMethods(unittest.TestCase):
         songs_directory = os.getenv('osu_songs_directory')
 
         replay = Replay(replay_path)
-        beatmap = Analyser(replay_path, songs_directory)
+        analyser = Analyser(replay_path, songs_directory)
 
-        self.assertEqual(replay.miss_count, beatmap.break_count - 1)
+        self.assertEqual(replay.miss_count, replay.miss_count, 0)
+        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.break_count, 1)
 
     def test_replay_04(self):
-        replay_path = r"sample_replays\chmpchmp - RADWIMPS - Zen Zen Zense (movie ver.) [Extra Taki] (2023-11-02) Osu.osr"
-
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
-
-        #replay = Replay(replay_path)
-        #beatmap = Analyser(replay_path, songs_directory)
-
-        #self.assertEqual(replay.miss_count, beatmap.break_count - 1)
-
-    def test_replay_05(self):
-        replay_path = r"sample_replays\chmpchmp - RADWIMPS - Zen Zen Zense (movie ver.) [Extra Mitsuha] (2023-09-08) Osu.osr"
+        replay_path = r"sample_replays\chmpchmp - Toyosaki Aki - Diamond [Insane] (2023-01-13) Osu.osr"
 
         load_dotenv()
         songs_directory = os.getenv('osu_songs_directory')
 
         replay = Replay(replay_path)
-        beatmap = Analyser(replay_path, songs_directory)
+        analyser = Analyser(replay_path, songs_directory)
 
-        self.assertEqual(replay.miss_count, beatmap.break_count)
+        self.assertEqual(replay.miss_count, replay.miss_count, 6)
+        self.assertEqual(analyser.sliderbreak_count, 4)
+        self.assertEqual(analyser.break_count, 10)
+
+    def test_replay_05(self):
+        replay_path = r"sample_replays\chmpchmp - RADWIMPS - Zen Zen Zense (movie ver.) [Extra Taki] (2023-11-02) Osu.osr"
+
+        load_dotenv()
+        songs_directory = os.getenv('osu_songs_directory')
+
+        replay = Replay(replay_path)
+        analyser = Analyser(replay_path, songs_directory)
+
+        self.assertEqual(replay.miss_count, replay.miss_count, 4)
+        self.assertEqual(analyser.sliderbreak_count, 4)
+        self.assertEqual(analyser.break_count, 8)
 
     def test_replay_06(self):
         replay_path = r"sample_replays\chmpchmp - 40mP feat. yuikonnu - Ame to Asphalt [Rain] (2023-11-03) Osu.osr"
@@ -69,9 +79,24 @@ class AnalyserTestMethods(unittest.TestCase):
         songs_directory = os.getenv('osu_songs_directory')
 
         replay = Replay(replay_path)
-        beatmap = Analyser(replay_path, songs_directory)
+        analyser = Analyser(replay_path, songs_directory)
 
-        self.assertEqual(replay.miss_count, beatmap.break_count)
-        
+        self.assertEqual(replay.miss_count, replay.miss_count, 0)
+        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.break_count, 0)
+
+    def test_replay_07(self):
+        replay_path = r"sample_replays\chmpchmp - Kero Kero Bonito - Flamingo (WTN3 Remix) [Multi Color] (2023-11-05) Osu.osr"
+
+        load_dotenv()
+        songs_directory = os.getenv('osu_songs_directory')
+
+        replay = Replay(replay_path)
+        analyser = Analyser(replay_path, songs_directory)
+
+        self.assertEqual(replay.miss_count, replay.miss_count, 1)
+        self.assertEqual(analyser.sliderbreak_count, 2)
+        self.assertEqual(analyser.break_count, 3)
+
 if __name__ == '__main__':
     unittest.main()
