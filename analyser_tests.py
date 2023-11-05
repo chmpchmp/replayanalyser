@@ -98,5 +98,18 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.sliderbreak_count, 2)
         self.assertEqual(analyser.break_count, 3)
 
+    def test_replay_08(self):
+        replay_path = r"sample_replays\chmpchmp - yuikonnu & ayaponzu - Super Nuko World [Guy's Extra] (2023-11-05) Osu.osr"
+
+        load_dotenv()
+        songs_directory = os.getenv('osu_songs_directory')
+
+        replay = Replay(replay_path)
+        analyser = Analyser(replay_path, songs_directory)
+
+        self.assertEqual(replay.miss_count, replay.miss_count, 0)
+        self.assertEqual(analyser.sliderbreak_count, 4)
+        self.assertEqual(analyser.break_count, 4)
+
 if __name__ == '__main__':
     unittest.main()
