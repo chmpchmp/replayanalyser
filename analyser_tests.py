@@ -16,6 +16,9 @@ class AnalyserTestMethods(unittest.TestCase):
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
 
+        self.assertEqual(analyser.key_one_count, 29)
+        self.assertEqual(analyser.key_two_count, 390)
+
         self.assertEqual(replay.miss_count, analyser.miss_count, 1)
         self.assertEqual(analyser.sliderbreak_count, 0)
         self.assertEqual(analyser.break_count, 1)
@@ -110,6 +113,19 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(replay.miss_count, replay.miss_count, 0)
         self.assertEqual(analyser.sliderbreak_count, 4)
         self.assertEqual(analyser.break_count, 4)
+
+    def test_replay_09(self):
+        replay_path = r"sample_replays\chmpchmp - Infected Mushroom - The Pretender [Pretender] (2023-11-06) Osu.osr"
+
+        load_dotenv()
+        songs_directory = os.getenv('osu_songs_directory')
+
+        replay = Replay(replay_path)
+        analyser = Analyser(replay_path, songs_directory)
+
+        self.assertEqual(replay.miss_count, replay.miss_count, 8)
+        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.break_count, 8)
 
 if __name__ == '__main__':
     unittest.main()
