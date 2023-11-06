@@ -5,6 +5,12 @@ import requests
 import os
 import pathlib
 
+class GameModeError(Exception):
+    pass
+
+class DirectoryError(Exception):
+    pass
+
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
         self.replay = self.parse_replay_data(replay_path)
@@ -12,6 +18,7 @@ class Beatmap:
         self.data = self.fetch_beatmap_data(self.replay.beatmap_hash)
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
+        self.break_windows = self.fetch_break_windows(self.difficulty_data)
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data, int(self.replay.mods_used))
 
         self.stack_leniency = self.fetch_stack_leniency(self.difficulty_data)
@@ -26,7 +33,7 @@ class Beatmap:
         if replay.game_mode == 0:
             return replay
         
-        raise ValueError('Game mode of the replay file is not osu!standard')
+        raise GameModeError('Game mode of the replay file is not osu!standard')
     
     def calculate_cursor_timings(self, cursor_data: list(list())) -> list(list()):
         cursor_timings = []
@@ -52,7 +59,7 @@ class Beatmap:
             if directory.split(' ')[0] == beatmapset_id:
                 return f'{songs_directory}\{directory}'
         
-        raise KeyError('Beatmap of replay could not be found in songs directory')
+        raise DirectoryError('Beatmap of replay could not be found in songs directory')
     
     def fetch_difficulty_data(self, beatmap_directory: str, beatmap_id: str) -> str:
         for file_name in os.listdir(beatmap_directory):
@@ -66,13 +73,22 @@ class Beatmap:
                     
                 file.close()
 
-        raise KeyError('Beatmap file pertaining to the replay file could not be found')
+        raise DirectoryError('Beatmap file pertaining to the replay file could not be found')
     
     def fetch_stack_leniency(self, difficulty_data: str) -> float:
         for line in difficulty_data.split('\n'):
             if 'StackLeniency: ' in line:
                 return float(line[15:])
             
+    def fetch_break_windows(self, difficulty_data: str) -> list(list()):
+        break_windows = [window.split(',')[1:] for window in difficulty_data.split('//Break Periods')[1].split('//Storyboard Layer 0 (Background)')[0].split('\n')[1:-1]]
+
+        for i in range(len(break_windows)):
+            break_windows[i][0] = float(break_windows[i][0])
+            break_windows[i][1] = float(break_windows[i][1])
+
+        return break_windows
+
     def fetch_hit_object_data(self, difficulty_data: str, mods_used: int) -> list():
         hit_object_data = [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
         hit_object_data = [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data
