@@ -18,12 +18,13 @@ class Beatmap:
         self.data = self.fetch_beatmap_data(self.replay.beatmap_hash)
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
-        self.break_windows = self.fetch_break_windows(self.difficulty_data)
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data, int(self.replay.mods_used))
 
         self.stack_leniency = self.fetch_stack_leniency(self.difficulty_data)
         self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']), int(self.replay.mods_used))
         self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used))
+
+        self.break_windows = self.fetch_break_windows(self.difficulty_data, self.cursor_data, self.hit_object_data, self.hit_window)
 
         self.title = self.create_beatmap_title()
     
@@ -46,6 +47,7 @@ class Beatmap:
             cursor_timings.append([ms_interval, float(split_point[1]), float(split_point[2]), int(split_point[3])])
 
         return cursor_timings
+        return cursor_timings[1:-1]
 
     def fetch_beatmap_data(self, beatmap_hash: str) -> int:
         load_dotenv()
@@ -79,15 +81,6 @@ class Beatmap:
         for line in difficulty_data.split('\n'):
             if 'StackLeniency: ' in line:
                 return float(line[15:])
-            
-    def fetch_break_windows(self, difficulty_data: str) -> list(list()):
-        break_windows = [window.split(',')[1:] for window in difficulty_data.split('//Break Periods')[1].split('//Storyboard Layer 0 (Background)')[0].split('\n')[1:-1]]
-
-        for i in range(len(break_windows)):
-            break_windows[i][0] = float(break_windows[i][0])
-            break_windows[i][1] = float(break_windows[i][1])
-
-        return break_windows
 
     def fetch_hit_object_data(self, difficulty_data: str, mods_used: int) -> list():
         hit_object_data = [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
@@ -133,6 +126,17 @@ class Beatmap:
             return (200 - 10 * overall_difficulty) * 1.5
 
         return 200 - 10 * overall_difficulty
+    
+    def fetch_break_windows(self, difficulty_data: str, cursor_data: list(list()), hit_object_data: list(list()), hit_window) -> list(list()):
+        break_windows = [window.split(',')[1:] for window in difficulty_data.split('//Break Periods')[1].split('//Storyboard Layer 0 (Background)')[0].split('\n')[1:-1]]
+
+        for i in range(len(break_windows)):
+            break_windows[i][0] = float(break_windows[i][0])
+            break_windows[i][1] = float(break_windows[i][1])
+
+        break_windows = [[cursor_data[1][0], hit_object_data[0][2] - hit_window]] + break_windows    # add from the beginning of beatmap to first note
+
+        return break_windows
     
     def create_beatmap_title(self) -> str:
         return f"{self.data['artist']} - {self.data['title']} [{self.data['version']}]"
