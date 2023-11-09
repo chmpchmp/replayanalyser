@@ -25,7 +25,7 @@ class Replay:
         self.life_bar_graph = self.decode_string().strip(',').split(',')
         self.time_stamp = self.decode_data('q')
         self.byte_length = self.decode_data('i')
-        self.replay_data = self.decode_lzma(self.byte_length).split(',')[1:-1]
+        self.replay_data = self.decode_replay_data(self.byte_length)
         self.online_score_id = self.decode_data('q')
         self.target_practice_mod = None
         
@@ -74,6 +74,9 @@ class Replay:
 
         return output
     
+    def decode_replay_data(self, byte_length: int) -> list(list()):
+        return self.decode_lzma(byte_length).split(',')[1:-2]    # remove informational frames
+    
     def decode_lzma(self, byte_length: int) -> str:
         return str(lzma.decompress(self.decode_data(f'<{byte_length}s')))
     
@@ -102,4 +105,5 @@ class Replay:
         
         if self.target_practice_mod != None:
             replay_data['target_practice_mod'] = self.target_practice_mod
+            
         return replay_data 
