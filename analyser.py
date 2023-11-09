@@ -13,22 +13,36 @@ class Analyser:
 
         self.analyze_replay()
 
-    def analyze_replay(self):
-        cursor_timings = self.beatmap.cursor_data
-        active_cursor_points = self.fetch_active_cursor_points(cursor_timings)
+    def analyze_replay(self) -> None:
+        active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
         hit_object_data = self.beatmap.hit_object_data
 
-        print(self.key_one_count, self.key_two_count, len(active_cursor_points))
+        previous_hit = [0, 0, 0, 0]
+
+        for object in hit_object_data:
+            possible_hits = self.calculate_valid_cursor_points(object[2], self.beatmap.hit_window, active_cursor_points)
+            possible_hits = [hit for hit in possible_hits if hit[0] > previous_hit[2]]
+            print(possible_hits)
+            if self.detect_miss(object[0], object[1], self.beatmap.circle_radius, possible_hits) and object[3] & 1 == 1:
+                previous_hit = [0, 0, 0, 0]
+                self.miss_count += 1
+                self.break_count += 1
+            elif self.detect_miss(object[0], object[1], self.beatmap.circle_radius, possible_hits) and object[3] & 2 == 2:
+                previous_hit = [0, 0, 0, 0]
+                self.sliderbreak_count += 1
+                self.break_count += 1
+            else:
+                previous_hit = object
 
     def fetch_active_cursor_points(self, cursor_timings: list(list())) -> list(list()):
         active_cursor_points = []
 
         for i in range(len(cursor_timings)-1):
-            if self.detect_key_one(cursor_timings[i][3], cursor_timings[i+1][3]) and cursor_timings[i+1][0] >= 0 and cursor_timings[i+1][3] != 1058002 and not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
+            if self.detect_key_one(cursor_timings[i][3], cursor_timings[i+1][3]) and not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
                 active_cursor_points.append(cursor_timings[i+1])
                 self.key_one_count += 1
 
-            if self.detect_key_two(cursor_timings[i][3], cursor_timings[i+1][3]) and cursor_timings[i+1][0] >= 0 and cursor_timings[i+1][3] != 1058002 and not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
+            if self.detect_key_two(cursor_timings[i][3], cursor_timings[i+1][3]) and not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
                 active_cursor_points.append(cursor_timings[i+1])
                 self.key_two_count += 1
 
@@ -42,10 +56,10 @@ class Analyser:
         return False
 
     def detect_key_one(self, first_timing: int, second_timing: int) -> bool:
-        return (first_timing ^ 1) & (second_timing & 1) == 1
+        return first_timing & 1 == 0 and second_timing & 1 == 1
     
     def detect_key_two(self, first_timing: int, second_timing: int) -> bool:
-        return (first_timing ^ 2) & (second_timing & 2) == 2
+        return first_timing & 2 == 0 and second_timing & 2 == 2
     
     def calculate_valid_cursor_points(self, object_timing: float, hit_window: float, active_cursor_points: dict) -> dict:
         minimum_timing = object_timing - hit_window
