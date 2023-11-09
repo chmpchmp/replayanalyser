@@ -2,7 +2,6 @@ from replay import Replay
 import unittest
 
 class ReplayTestMethods(unittest.TestCase):
-
     def test_replay_01(self):
         path = 'sample_replays/chmpchmp - Suzuyu - Euphorium [The Dream Of White Star.] (2022-10-28) Osu.osr'
     
