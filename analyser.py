@@ -1,38 +1,54 @@
 from beatmap import Beatmap
 
 class Analyser:
+    # to do: account for breaks from leaving sliderball and leaving buzzslider too early
+
     def __init__(self, replay_path: str, songs_directory: str):
         self.beatmap = Beatmap(replay_path, songs_directory)
 
         self.key_one_count = 0
         self.key_two_count = 0
 
+        # the amount of combo breaks because of sliders
         self.miss_count = 0
+
+        # the amount of combo breaks because of sliders
         self.sliderbreak_count = 0
+
+        # miss_count plus sliderbreak_count
         self.break_count = 0
 
         self.analyze_replay()
+
+        print(self.miss_count, self.sliderbreak_count, self.break_count)
 
     def analyze_replay(self) -> None:
         active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
         hit_object_data = self.beatmap.hit_object_data
 
-        previous_hit = [0, 0, 0, 0]
+        previous_hit = [0, -1, -1, -1]
 
         for object in hit_object_data:
-            possible_hits = self.calculate_valid_cursor_points(object[2], self.beatmap.hit_window, active_cursor_points)
-            possible_hits = [hit for hit in possible_hits if hit[0] > previous_hit[2]]
-            print(possible_hits)
-            if self.detect_miss(object[0], object[1], self.beatmap.circle_radius, possible_hits) and object[3] & 1 == 1:
-                previous_hit = [0, 0, 0, 0]
+            possible_points = self.calculate_points_within_timing(object[2], self.beatmap.hit_window, previous_hit[0], active_cursor_points)
+            possible_points = self.calculate_points_in_circle(object[0], object[1], self.beatmap.circle_radius, possible_points)
+
+            if previous_hit in possible_points:
+                possible_points.remove(previous_hit)
+
+            if possible_points == [] and object[3] & 1 == 1:
                 self.miss_count += 1
                 self.break_count += 1
-            elif self.detect_miss(object[0], object[1], self.beatmap.circle_radius, possible_hits) and object[3] & 2 == 2:
-                previous_hit = [0, 0, 0, 0]
+
+                # set the window to the maximum timing to account for notelock
+                previous_hit = [object[2] + self.beatmap.hit_window, -1, -1, -1]
+            elif possible_points == [] and object[3] & 2 == 2:
                 self.sliderbreak_count += 1
                 self.break_count += 1
+
+                # set the window to the maximum timing to account for notelock
+                previous_hit = [object[2] + self.beatmap.hit_window, -1, -1, -1]
             else:
-                previous_hit = object
+                previous_hit = possible_points[0]
 
     def fetch_active_cursor_points(self, cursor_timings: list(list())) -> list(list()):
         active_cursor_points = []
@@ -61,17 +77,24 @@ class Analyser:
     def detect_key_two(self, first_timing: int, second_timing: int) -> bool:
         return first_timing & 2 == 0 and second_timing & 2 == 2
     
-    def calculate_valid_cursor_points(self, object_timing: float, hit_window: float, active_cursor_points: dict) -> dict:
-        minimum_timing = object_timing - hit_window
+    def calculate_points_within_timing(self, object_timing: float, hit_window: float, previous_hit_timing: float, cursor_points: list) -> list:
+        minimum_timing = previous_hit_timing
         maximum_timing = object_timing + hit_window
-        return [point for point in active_cursor_points if minimum_timing < point[0] < maximum_timing]
+        return [point for point in cursor_points if minimum_timing < point[0] < maximum_timing]
     
-    def detect_miss(self, center_x: int, center_y: int, circle_radius: float, valid_cursor_points: list(list())) -> bool:
-        for point in valid_cursor_points:
-            if self.point_in_circle(center_x, center_y, circle_radius, point[1], point[2]):
-                return False
-        
-        return True
+    def calculate_points_in_circle(self, center_x: int, center_y: int, radius: float, cursor_points: list) -> list:
+        return [point for point in cursor_points if (point[1] - center_x)**2 + (point[2] - center_y)**2 < radius**2]
+    
+if __name__ == '__main__':
+    from replay import Replay
 
-    def point_in_circle(self, center_x: int, center_y: int, radius: float, point_x: float, point_y: float) -> bool:
-        return (point_x - center_x)**2 + (point_y - center_y)**2 < radius**2
+    from dotenv import load_dotenv
+    import os
+
+    replay_path = r"C:\Users\snoop\AppData\Local\osu!\Replays\chmpchmp - CHiCO with HoneyWorks - Kessen Spirit [Not DT Farmer's Extra] (2023-01-16) Osu.osr"
+
+    load_dotenv()
+    songs_directory = os.getenv('osu_songs_directory')
+
+    replay = Replay(replay_path)
+    analyser = Analyser(replay_path, songs_directory)
