@@ -1,6 +1,7 @@
 import pathlib
 import struct
 import lzma
+import json
 
 class Replay:
     def __init__(self, path: str):
@@ -41,7 +42,9 @@ class Replay:
     def decode_data(self, data_type: str) -> int:
         output = struct.unpack_from(data_type, self.data, self.offset)
         self.offset += struct.calcsize(data_type)
-        return output[0]    # output will always be in a tuple of size 1
+
+        # output will always be in a tuple of size 1
+        return output[0]
     
     def decode_string(self) -> str:
         if self.data[self.offset] == 0x00:
@@ -57,9 +60,6 @@ class Replay:
             raise ValueError('Initial value is ', self.data[self.offset], ', expected 0x00 or 0x0b')
         
     def decode_uleb128(self) -> int:
-        '''
-        Converts a value in unsigned little endian base 128 to decimal
-        '''
         output = 0
         iteration = 0
         
@@ -75,12 +75,13 @@ class Replay:
         return output
     
     def decode_replay_data(self, byte_length: int) -> list(list()):
-        return self.decode_lzma(byte_length).split(',')[1:-2]    # remove informational frames
+        # remove informational frames
+        return self.decode_lzma(byte_length).split(',')[1:-2]
     
     def decode_lzma(self, byte_length: int) -> str:
         return str(lzma.decompress(self.decode_data(f'<{byte_length}s')))
     
-    def return_json(self) -> dict():
+    def return_dict(self) -> dict:
         replay_data = dict()
         replay_data['game_mode'] = self.game_mode
         replay_data['game_version'] = self.game_version
@@ -106,4 +107,32 @@ class Replay:
         if self.target_practice_mod != None:
             replay_data['target_practice_mod'] = self.target_practice_mod
             
-        return replay_data 
+        return replay_data
+    
+    def return_json(self) -> dict:
+        replay_data = dict()
+        replay_data['game_mode'] = self.game_mode
+        replay_data['game_version'] = self.game_version
+        replay_data['beatmap_hash'] = self.beatmap_hash
+        replay_data['player_name'] = self.player_name
+        replay_data['replay_hash'] = self.replay_hash
+        replay_data['300_count'] = self.count_300
+        replay_data['100_count'] = self.count_100
+        replay_data['50_count'] = self.count_50
+        replay_data['geki_count'] = self.geki_count
+        replay_data['katu_count'] = self.katu_count
+        replay_data['miss_count'] = self.miss_count
+        replay_data['total_score'] = self.total_score
+        replay_data['highest_combo'] = self.highest_combo
+        replay_data['perfect_combo'] = self.perfect_combo
+        replay_data['mods_used'] = self.mods_used
+        replay_data['life_bar_graph'] = self.life_bar_graph
+        replay_data['time_stamp'] = self.time_stamp
+        replay_data['byte_length'] = self.byte_length
+        replay_data['replay_data'] = self.replay_data
+        replay_data['online_score_id'] = self.online_score_id
+        
+        if self.target_practice_mod != None:
+            replay_data['target_practice_mod'] = self.target_practice_mod
+            
+        return json.dumps(replay_data)
