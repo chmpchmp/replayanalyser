@@ -9,18 +9,15 @@ class Analyser:
         self.key_one_count = 0
         self.key_two_count = 0
 
-        # the amount of combo breaks because of sliders
-        self.miss_count = 0
+        self.miss_count = 0           # the amount of combo breaks because of hit circles
+        self.sliderbreak_count = 0    # the amount of combo breaks because of sliders
+        self.break_count = 0          # miss_count plus sliderbreak_count
 
-        # the amount of combo breaks because of sliders
-        self.sliderbreak_count = 0
-
-        # miss_count plus sliderbreak_count
-        self.break_count = 0
+        self.miss_data = []
 
         self.analyze_replay()
 
-        print(self.miss_count, self.sliderbreak_count, self.break_count)
+        #print(self.miss_count, self.sliderbreak_count, self.break_count)
 
     def analyze_replay(self) -> None:
         active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
