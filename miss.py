@@ -1,10 +1,3 @@
 class Miss:
-    def __init__(self):
-        self.missaim = False
-        self.no_input = False
-
-    def missaim(self):
-        self.missaim = True
-
-    def no_input(self):
-        self.no_input = True
+    def __init__(self, hit_object_data: list(list()), cursor_data: list(list()), reason: str):
+        pass
