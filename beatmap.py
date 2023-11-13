@@ -83,10 +83,6 @@ class Beatmap:
 
     def fetch_hit_object_data(self, difficulty_data: str, mods_used: int) -> list:
         hit_object_data = [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
-
-        # exclude objects that are spinners
-        #hit_object_data = [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data if int(object[3]) & 8 == 0]
-        
         hit_object_data = [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data]
 
         # invert hit objects across x-axis for hard rock
