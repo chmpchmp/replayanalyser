@@ -20,10 +20,13 @@ class Analyser:
         #print(self.miss_count, self.sliderbreak_count, self.break_count)
 
     def analyze_replay(self) -> None:
+        # to do: account for hit window changes after spinners and breaks
+
         active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
         hit_object_data = self.beatmap.hit_object_data
 
-        previous_hit = [0, -1, -1, -1]
+        # set the window to the minimum timing of the first hit object
+        previous_hit = [hit_object_data[0][2] - self.beatmap.hit_window, -1, -1, -1]
 
         for object in hit_object_data:
             possible_points = self.calculate_points_within_timing(object[2], self.beatmap.hit_window, previous_hit[0], active_cursor_points)
@@ -32,14 +35,12 @@ class Analyser:
             if previous_hit in possible_points:
                 possible_points.remove(previous_hit)
 
-            if possible_points == [] and object[3] & 1 == 1:
-                self.miss_count += 1
-                self.break_count += 1
+            if possible_points == []:
+                if object[3] & 1 == 1:
+                    self.miss_count += 1
+                if object[3] & 2 == 2:
+                    self.sliderbreak_count += 1
 
-                # set the window to the maximum timing to account for notelock
-                previous_hit = [object[2] + self.beatmap.hit_window, -1, -1, -1]
-            elif possible_points == [] and object[3] & 2 == 2:
-                self.sliderbreak_count += 1
                 self.break_count += 1
 
                 # set the window to the maximum timing to account for notelock
