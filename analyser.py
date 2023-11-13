@@ -57,13 +57,15 @@ class Analyser:
         active_cursor_points = []
 
         for i in range(len(cursor_timings)-1):
-            if self.detect_key_one(cursor_timings[i][3], cursor_timings[i+1][3]) and not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
-                active_cursor_points.append(cursor_timings[i+1])
-                self.key_one_count += 1
+            if not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
+                # do not track inputs during breaks
+                if self.detect_key_one(cursor_timings[i][3], cursor_timings[i+1][3]):
+                    active_cursor_points.append(cursor_timings[i+1])
+                    self.key_one_count += 1
 
-            if self.detect_key_two(cursor_timings[i][3], cursor_timings[i+1][3]) and not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
-                active_cursor_points.append(cursor_timings[i+1])
-                self.key_two_count += 1
+                if self.detect_key_two(cursor_timings[i][3], cursor_timings[i+1][3]):
+                    active_cursor_points.append(cursor_timings[i+1])
+                    self.key_two_count += 1
 
         return active_cursor_points
     
