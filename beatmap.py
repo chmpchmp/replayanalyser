@@ -47,7 +47,6 @@ class Beatmap:
             cursor_timings.append([ms_interval, float(split_point[1]), float(split_point[2]), int(split_point[3])])
 
         return cursor_timings
-        return cursor_timings[1:-1]
 
     def fetch_beatmap_data(self, beatmap_hash: str) -> int:
         load_dotenv()
