@@ -1,17 +1,15 @@
 from beatmap import Beatmap
 
 class Analyser:
-    # to do: account for breaks from leaving sliderball and leaving buzzslider too early
-
     def __init__(self, replay_path: str, songs_directory: str):
         self.beatmap = Beatmap(replay_path, songs_directory)
 
         self.key_one_count = 0
         self.key_two_count = 0
 
-        self.miss_count = 0           # the amount of combo breaks because of hit circles
-        self.sliderbreak_count = 0    # the amount of combo breaks because of sliders
-        self.break_count = 0          # miss_count plus sliderbreak_count
+        self.miss_count = 0          # the amount of combo breaks because of hit circles
+        self.slidermiss_count = 0    # the amount of combo breaks because of sliders
+        self.break_count = 0         # miss_count plus slidermiss
 
         self.miss_data = []
 
@@ -20,7 +18,8 @@ class Analyser:
         #print(self.miss_count, self.sliderbreak_count, self.break_count)
 
     def analyze_replay(self) -> None:
-        # to do: account for hit window changes after spinners and breaks
+        # to do: account for hit window changes after breaks
+        # to do: account for breaks from leaving sliderball and leaving buzzslider too early
 
         active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
         hit_object_data = self.beatmap.hit_object_data
@@ -28,25 +27,31 @@ class Analyser:
         # set the window to the minimum timing of the first hit object
         previous_hit = [hit_object_data[0][2] - self.beatmap.hit_window, -1, -1, -1]
 
-        for object in hit_object_data:
-            possible_points = self.calculate_points_within_timing(object[2], self.beatmap.hit_window, previous_hit[0], active_cursor_points)
-            possible_points = self.calculate_points_in_circle(object[0], object[1], self.beatmap.circle_radius, possible_points)
-
-            if previous_hit in possible_points:
-                possible_points.remove(previous_hit)
-
-            if possible_points == []:
-                if object[3] & 1 == 1:
-                    self.miss_count += 1
-                if object[3] & 2 == 2:
-                    self.sliderbreak_count += 1
-
-                self.break_count += 1
-
-                # set the window to the maximum timing to account for notelock
-                previous_hit = [object[2] + self.beatmap.hit_window, -1, -1, -1]
+        for i in range(len(hit_object_data)):
+            # set the window to the minimum timing of the next hit object and avoid miss checking if the current object is a spinner
+            if hit_object_data[i][3] & 8 == 8 and i != len(hit_object_data) - 1:
+                previous_hit = [hit_object_data[i+1][2] - self.beatmap.hit_window, -1, -1, -1]
+            elif hit_object_data[i][3] & 8 == 8:
+                pass
             else:
-                previous_hit = possible_points[0]
+                possible_points = self.calculate_points_within_timing(hit_object_data[i][2], self.beatmap.hit_window, previous_hit[0], active_cursor_points)
+                possible_points = self.calculate_points_in_circle(hit_object_data[i][0], hit_object_data[i][1], self.beatmap.circle_radius, possible_points)
+
+                if previous_hit in possible_points:
+                    possible_points.remove(previous_hit)
+
+                if possible_points == []:
+                    if hit_object_data[i][3] & 1 == 1:
+                        self.miss_count += 1
+                    if hit_object_data[i][3] & 2 == 2:
+                        self.slidermiss_count += 1
+
+                    self.break_count += 1
+
+                    # set the window to the maximum timing to account for notelock
+                    previous_hit = [hit_object_data[i][2] + self.beatmap.hit_window, -1, -1, -1]
+                else:
+                    previous_hit = possible_points[0]
 
     def fetch_active_cursor_points(self, cursor_timings: list(list())) -> list(list()):
         active_cursor_points = []
