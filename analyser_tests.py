@@ -114,9 +114,10 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_one_count, 222)
         self.assertEqual(analyser.key_two_count, 1229)
 
-        self.assertEqual(replay.miss_count, analyser.miss_count, 8)
-        #self.assertEqual(analyser.sliderbreak_count, 0)
-        self.assertEqual(analyser.break_count, 8)
+        # replay.miss_count does not equal analyser.miss_count because the later does not count sliders missed
+        self.assertEqual(analyser.miss_count, 2)
+        self.assertEqual(analyser.sliderbreak_count, 9)
+        self.assertEqual(analyser.break_count, 11)
 
     def test_replay_all_eyes_on_me(self):
         replay_path = r"sample_replays\chmpchmp - Fox Stevenson - All Eyes On Me (Cut Ver.) [Gracefully Hallucinate] (2023-11-08) Osu.osr"
@@ -147,8 +148,8 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 912)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 7)
-        self.assertEqual(analyser.sliderbreak_count, 0)
-        self.assertEqual(analyser.break_count, 7)
+        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.break_count, 8)
 
     def test_replay_lazybaby(self):
         replay_path = r"sample_replays\chmpchmp - Dove Cameron - LazyBaby [Hard] (2023-08-06) Osu.osr"
@@ -195,8 +196,8 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 1172)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 13)
-        #self.assertEqual(analyser.sliderbreak_count, 0)
-        self.assertEqual(analyser.break_count, 13)
+        self.assertEqual(analyser.sliderbreak_count, 2)
+        self.assertEqual(analyser.break_count, 15)
 
     def test_replay_senpai(self):
         replay_path = r"sample_replays\chmpchmp - HoneyWorks meets TrySail - Senpai. [Graduation] (2023-11-05) Osu.osr"
@@ -211,8 +212,8 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 1160)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 17)
-        #self.assertEqual(analyser.sliderbreak_count, 0)
-        self.assertEqual(analyser.break_count, 17)
+        self.assertEqual(analyser.sliderbreak_count, 3)
+        self.assertEqual(analyser.break_count, 20)
 
     def test_replay_bocchi(self):
         replay_path = r"sample_replays\chmpchmp - kessoku band - Guitar to Kodoku to Aoi Hoshi [Akitoshi's Extreme] (2023-10-16) Osu.osr"
@@ -227,8 +228,8 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 804)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 2)
-        self.assertEqual(analyser.sliderbreak_count, 0)
-        self.assertEqual(analyser.break_count, 2)
+        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.break_count, 3)
 
     def test_replay_ikenai_borderline(self):
         replay_path = r"sample_replays\chmpchmp - WALKURE - Ikenai Borderline (Speed Up Ver.) [Your voice may even reach the heavens one day] (2023-04-28) Osu.osr"
@@ -242,9 +243,10 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_one_count, 145)
         self.assertEqual(analyser.key_two_count, 1145)
 
-        self.assertEqual(replay.miss_count, analyser.miss_count, 114)
-        #self.assertEqual(analyser.sliderbreak_count, 0)
-        self.assertEqual(analyser.break_count, 114)
+        # replay.miss_count does not equal analyser.miss_count because the later does not count sliders missed
+        self.assertEqual(analyser.miss_count, 111)
+        self.assertEqual(analyser.sliderbreak_count, 14)
+        self.assertEqual(analyser.break_count, 125)
 
 if __name__ == '__main__':
     unittest.main()
