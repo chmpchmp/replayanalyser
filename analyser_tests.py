@@ -19,7 +19,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 390)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 1)
-        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.slidermiss_count, 0)
         self.assertEqual(analyser.break_count, 1)
 
     def test_replay_sakura_no_uta(self):
@@ -35,7 +35,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 736)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 0)
-        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.slidermiss_count, 0)
         self.assertEqual(analyser.break_count, 0)
 
     def test_replay_hitorigoto(self):
@@ -51,7 +51,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 320)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 0)
-        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.slidermiss_count, 1)
         self.assertEqual(analyser.break_count, 1)
 
     def test_replay_ame_to_asphalt(self):
@@ -67,7 +67,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 384)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 0)
-        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.slidermiss_count, 0)
         self.assertEqual(analyser.break_count, 0)
 
     def test_replay_flamingo(self):
@@ -83,7 +83,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 728)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 1)
-        self.assertEqual(analyser.sliderbreak_count, 2)
+        self.assertEqual(analyser.slidermiss_count, 2)
         self.assertEqual(analyser.break_count, 3)
 
     def test_replay_super_nuko_world(self):
@@ -99,7 +99,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 1033)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 0)
-        self.assertEqual(analyser.sliderbreak_count, 4)
+        self.assertEqual(analyser.slidermiss_count, 4)
         self.assertEqual(analyser.break_count, 4)
 
     def test_replay_the_pretender(self):
@@ -116,7 +116,7 @@ class AnalyserTestMethods(unittest.TestCase):
 
         # replay.miss_count does not equal analyser.miss_count because the latter does not count sliders missed
         self.assertEqual(analyser.miss_count, 2)
-        self.assertEqual(analyser.sliderbreak_count, 9)
+        self.assertEqual(analyser.slidermiss_count, 9)
         self.assertEqual(analyser.break_count, 11)
 
     def test_replay_all_eyes_on_me(self):
@@ -132,7 +132,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 375)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 3)
-        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.slidermiss_count, 1)
         self.assertEqual(analyser.break_count, 4)
 
     def test_replay_sidetracked_day(self):
@@ -148,7 +148,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 912)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 7)
-        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.slidermiss_count, 1)
         self.assertEqual(analyser.break_count, 8)
 
     def test_replay_lazybaby(self):
@@ -164,7 +164,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 344)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 0)
-        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.slidermiss_count, 0)
         self.assertEqual(analyser.break_count, 0)
 
     def test_replay_colorful(self):
@@ -180,7 +180,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 497)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 2)
-        self.assertEqual(analyser.sliderbreak_count, 0)
+        self.assertEqual(analyser.slidermiss_count, 0)
         self.assertEqual(analyser.break_count, 2)
 
     def test_replay_colorful_dnb(self):
@@ -196,7 +196,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 1172)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 13)
-        self.assertEqual(analyser.sliderbreak_count, 2)
+        self.assertEqual(analyser.slidermiss_count, 2)
         self.assertEqual(analyser.break_count, 15)
 
     def test_replay_senpai(self):
@@ -212,7 +212,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 1160)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 17)
-        self.assertEqual(analyser.sliderbreak_count, 3)
+        self.assertEqual(analyser.slidermissk_count, 3)
         self.assertEqual(analyser.break_count, 20)
 
     def test_replay_bocchi(self):
@@ -228,7 +228,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 804)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 2)
-        self.assertEqual(analyser.sliderbreak_count, 1)
+        self.assertEqual(analyser.slidermiss_count, 1)
         self.assertEqual(analyser.break_count, 3)
 
     def test_replay_ikenai_borderline(self):
@@ -245,7 +245,7 @@ class AnalyserTestMethods(unittest.TestCase):
 
         # replay.miss_count does not equal analyser.miss_count because the latter does not count sliders missed
         self.assertEqual(analyser.miss_count, 111)
-        self.assertEqual(analyser.sliderbreak_count, 14)
+        self.assertEqual(analyser.slidermiss_count, 14)
         self.assertEqual(analyser.break_count, 125)
 
 if __name__ == '__main__':
