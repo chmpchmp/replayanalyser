@@ -82,19 +82,23 @@ class Beatmap:
             if 'StackLeniency: ' in line:
                 return float(line[15:])
 
-    def fetch_hit_object_data(self, difficulty_data: str, mods_used: int) -> list():
+    def fetch_hit_object_data(self, difficulty_data: str, mods_used: int) -> list:
         hit_object_data = [object.split(',')[:4] for object in difficulty_data.split('[HitObjects]')[1].split('\n')][1:-1]
-        hit_object_data = [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data
-                            if int(object[3]) & 8 == 0]    # exclude objects that are spinners
 
-        if mods_used & 16 == 16:    # invert hit objects across x-axis for hard rock
+        # exclude objects that are spinners
+        hit_object_data = [[int(object[0]), int(object[1]), int(object[2]), int(object[3])] for object in hit_object_data
+                            if int(object[3]) & 8 == 0]
+
+        # invert hit objects across x-axis for hard rock
+        if mods_used & 16 == 16:
             for i in range(len(hit_object_data)):
                 hit_object_data[i][1] = 384 - hit_object_data[i][1]
 
         return hit_object_data
 
     def calculate_circle_radius(self, circle_size: float, mods_used) -> float:
-        if mods_used & 16 == 16:    # circle size for hard rock
+        # circle size for hard rock
+        if mods_used & 16 == 16:
             hr_circle_size = 1.3 * circle_size
 
             if hr_circle_size < 10:
@@ -102,13 +106,15 @@ class Beatmap:
             else:
                 return (54.4 - 4.48 * 10)
         
-        if mods_used & 256 == 256:    # circle size for easy
+        # circle size for easy
+        if mods_used & 256 == 256:
             return (54.4 - 4.48 * circle_size * 0.5)
 
         return 54.4 - 4.48 * circle_size
     
     def calculate_hit_window(self, overall_difficulty: float, mods_used: int) -> float:
-        if mods_used & 16 == 16:    # hit window for hard rock
+        # hit window for hard rock
+        if mods_used & 16 == 16:
             hr_overall_difficulty = 1.4 * overall_difficulty
 
             if hr_overall_difficulty < 10:
@@ -116,13 +122,16 @@ class Beatmap:
             else:
                 overall_difficulty = 10
 
-        if mods_used & 256 == 256:    # hit window for easy
+        # hit window for easy
+        if mods_used & 256 == 256:
             overall_difficulty = 0.5 * overall_difficulty
 
-        if mods_used & 64 == 64:    # hit window for double time (including nightcore)
+        # hit window for double time (including nightcore)
+        if mods_used & 64 == 64:
             return (200 - 10 * overall_difficulty) / 1.5
 
-        if mods_used & 256 == 256:    # hit window for half time
+        # hit window for half time
+        if mods_used & 256 == 256:
             return (200 - 10 * overall_difficulty) * 1.5
 
         return 200 - 10 * overall_difficulty
@@ -134,7 +143,8 @@ class Beatmap:
             break_windows[i][0] = float(break_windows[i][0])
             break_windows[i][1] = float(break_windows[i][1])
 
-        break_windows = [[cursor_data[1][0], hit_object_data[0][2] - hit_window]] + break_windows    # add from the beginning of beatmap to first note
+        # add break window that is from the beginning of beatmap to first note
+        break_windows = [[cursor_data[1][0], hit_object_data[0][2] - hit_window]] + break_windows
 
         return break_windows
     
