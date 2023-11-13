@@ -114,7 +114,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_one_count, 222)
         self.assertEqual(analyser.key_two_count, 1229)
 
-        # replay.miss_count does not equal analyser.miss_count because the later does not count sliders missed
+        # replay.miss_count does not equal analyser.miss_count because the latter does not count sliders missed
         self.assertEqual(analyser.miss_count, 2)
         self.assertEqual(analyser.sliderbreak_count, 9)
         self.assertEqual(analyser.break_count, 11)
@@ -243,7 +243,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_one_count, 145)
         self.assertEqual(analyser.key_two_count, 1145)
 
-        # replay.miss_count does not equal analyser.miss_count because the later does not count sliders missed
+        # replay.miss_count does not equal analyser.miss_count because the latter does not count sliders missed
         self.assertEqual(analyser.miss_count, 111)
         self.assertEqual(analyser.sliderbreak_count, 14)
         self.assertEqual(analyser.break_count, 125)
