@@ -212,7 +212,7 @@ class AnalyserTestMethods(unittest.TestCase):
         self.assertEqual(analyser.key_two_count, 1160)
 
         self.assertEqual(replay.miss_count, analyser.miss_count, 17)
-        self.assertEqual(analyser.slidermissk_count, 3)
+        self.assertEqual(analyser.slidermiss_count, 3)
         self.assertEqual(analyser.break_count, 20)
 
     def test_replay_bocchi(self):
