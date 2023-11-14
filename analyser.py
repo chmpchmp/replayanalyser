@@ -1,4 +1,7 @@
 from beatmap import Beatmap
+from miss import Miss
+
+MILLISECOND_INTERVAL = 1000
 
 class Analyser:
     def __init__(self, replay_path: str, songs_directory: str):
@@ -15,12 +18,16 @@ class Analyser:
 
         self.analyze_replay()
 
+        for miss in self.miss_data:
+            print(miss.hit_object_data)
+
         #print(self.miss_count, self.sliderbreak_count, self.break_count)
 
     def analyze_replay(self) -> None:
         # to do: account for hit window changes after breaks
         # to do: account for breaks from leaving sliderball and leaving buzzslider too early
 
+        cursor_data = self.beatmap.cursor_data
         active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
         hit_object_data = self.beatmap.hit_object_data
 
@@ -28,11 +35,11 @@ class Analyser:
         previous_hit = [hit_object_data[0][2] - self.beatmap.hit_window, -1, -1, -1]
 
         for i in range(len(hit_object_data)):
-            # set the window to the minimum timing of the next hit object and avoid miss checking if the current object is a spinner
-            if hit_object_data[i][3] & 8 == 8 and i != len(hit_object_data) - 1:
-                previous_hit = [hit_object_data[i+1][2] - self.beatmap.hit_window, -1, -1, -1]
-            elif hit_object_data[i][3] & 8 == 8:
+            if hit_object_data[i][3] & 8 == 8 and i == len(hit_object_data) - 1:
                 pass
+            # set the window to the minimum timing of the next hit object and avoid miss checking if the current object is a spinner
+            elif hit_object_data[i][3] & 8 == 8:
+                previous_hit = [hit_object_data[i+1][2] - self.beatmap.hit_window, -1, -1, -1]
             else:
                 possible_points = self.calculate_points_within_timing(hit_object_data[i][2], self.beatmap.hit_window, previous_hit[0], active_cursor_points)
                 possible_points = self.calculate_points_in_circle(hit_object_data[i][0], hit_object_data[i][1], self.beatmap.circle_radius, possible_points)
@@ -41,12 +48,12 @@ class Analyser:
                     possible_points.remove(previous_hit)
 
                 if possible_points == []:
-                    if hit_object_data[i][3] & 1 == 1:
-                        self.miss_count += 1
-                    if hit_object_data[i][3] & 2 == 2:
-                        self.slidermiss_count += 1
+                    self.increment_miss_count(hit_object_data[i][3])
 
-                    self.break_count += 1
+                    miss_hit_object_data = [object for object in hit_object_data if hit_object_data[i][2] - MILLISECOND_INTERVAL <= object[2] <= hit_object_data[i][2] + MILLISECOND_INTERVAL]
+                    miss_cursor_data = [point for point in cursor_data if hit_object_data[i][2] - MILLISECOND_INTERVAL <= point[0] <= hit_object_data[i][2] + MILLISECOND_INTERVAL]
+
+                    self.miss_data.append(Miss(miss_hit_object_data, miss_cursor_data, hit_object_data[i][2]))
 
                     # set the window to the maximum timing to account for notelock
                     previous_hit = [hit_object_data[i][2] + self.beatmap.hit_window, -1, -1, -1]
@@ -89,17 +96,11 @@ class Analyser:
     
     def calculate_points_in_circle(self, center_x: int, center_y: int, radius: float, cursor_points: list) -> list:
         return [point for point in cursor_points if (point[1] - center_x)**2 + (point[2] - center_y)**2 < radius**2]
-    
-if __name__ == '__main__':
-    from replay import Replay
 
-    from dotenv import load_dotenv
-    import os
+    def increment_miss_count(self, object_type: int) -> None:
+        if object_type & 1 == 1:
+            self.miss_count += 1
+        if object_type & 2 == 2:
+            self.slidermiss_count += 1
 
-    replay_path = r"C:\Users\snoop\AppData\Local\osu!\Replays\chmpchmp - CHiCO with HoneyWorks - Kessen Spirit [Not DT Farmer's Extra] (2023-01-16) Osu.osr"
-
-    load_dotenv()
-    songs_directory = os.getenv('osu_songs_directory')
-
-    replay = Replay(replay_path)
-    analyser = Analyser(replay_path, songs_directory)
+        self.break_count += 1
