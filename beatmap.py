@@ -19,10 +19,13 @@ class Beatmap:
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
         self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data, int(self.replay.mods_used))
-
         self.stack_leniency = self.fetch_stack_leniency(self.difficulty_data)
         self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']), int(self.replay.mods_used))
-        self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used))
+
+        self.hit_window_300 = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_300)
+        self.hit_window_100 = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_100)
+        self.hit_window_50 = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_50)
+        self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_50)
 
         self.break_windows = self.fetch_break_windows(self.difficulty_data, self.cursor_data, self.hit_object_data, self.hit_window)
 
@@ -108,7 +111,16 @@ class Beatmap:
 
         return 54.4 - 4.48 * circle_size
     
-    def calculate_hit_window(self, overall_difficulty: float, mods_used: int) -> float:
+    def calculate_hit_window_300(self, overall_difficulty: float) -> float:
+        return 80 - 6 * overall_difficulty
+    
+    def calculate_hit_window_100(self, overall_difficulty: float) -> float:
+        return 140 - 8 * overall_difficulty
+    
+    def calculate_hit_window_50(self, overall_difficulty: float) -> float:
+        return 200 - 10 * overall_difficulty
+
+    def calculate_hit_window(self, overall_difficulty: float, mods_used: int, hit_window_function) -> float:
         # hit window for hard rock
         if mods_used & 16 == 16:
             hr_overall_difficulty = 1.4 * overall_difficulty
@@ -124,13 +136,13 @@ class Beatmap:
 
         # hit window for double time (including nightcore)
         if mods_used & 64 == 64:
-            return (200 - 10 * overall_difficulty) / 1.5
+            return hit_window_function(overall_difficulty) / 1.5
 
         # hit window for half time
         if mods_used & 256 == 256:
-            return (200 - 10 * overall_difficulty) * 1.5
+            return hit_window_function(overall_difficulty) * 1.5
 
-        return 200 - 10 * overall_difficulty
+        return hit_window_function(overall_difficulty)
     
     def fetch_break_windows(self, difficulty_data: str, cursor_data: list(list()), hit_object_data: list(list()), hit_window) -> list(list()):
         break_windows = [window.split(',')[1:] for window in difficulty_data.split('//Break Periods')[1].split('//Storyboard Layer 0 (Background)')[0].split('\n')[1:-1]]
