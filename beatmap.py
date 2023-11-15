@@ -1,3 +1,4 @@
+from settings import Settings
 from replay import Replay
 
 from dotenv import load_dotenv
@@ -13,6 +14,8 @@ class DirectoryError(Exception):
 
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
+        self.settings = Settings()
+
         self.replay = self.parse_replay_data(replay_path)
         self.cursor_data = self.calculate_cursor_timings(self.replay.replay_data)
         self.data = self.fetch_beatmap_data(self.replay.beatmap_hash)
@@ -52,8 +55,9 @@ class Beatmap:
         return cursor_timings
 
     def fetch_beatmap_data(self, beatmap_hash: str) -> dict:
-        load_dotenv()
-        response = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={os.getenv('api_key')}&h={beatmap_hash}")
+        #load_dotenv()
+        #response = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={os.getenv('api_key')}&h={beatmap_hash}")
+        response = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={self.settings.api_key}&h={beatmap_hash}")
         return response.json()[0]
     
     def find_beatmap_directory(self, songs_directory: str, beatmapset_id: str) -> str:
