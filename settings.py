@@ -10,10 +10,5 @@ class Settings:
         self.songs_directory = f'{self.osu_directory}\Songs'
         self.replay_directory = f'{self.osu_directory}\Replays'
 
-        print(self.api_key)
-        print(self.osu_directory)
-        print(self.songs_directory)
-        print(self.replay_directory)
-
 if __name__ == '__main__':
     Settings()
