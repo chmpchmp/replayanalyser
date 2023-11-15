@@ -53,9 +53,12 @@ class Display:
             turtle.pendown()
 
             if time == self.miss.hit_object_timing:
-                turtle.color('orange') 
+                turtle.color('chocolate') 
             else:
-                turtle.color('blue')
+                if type & 1 == 1:
+                    turtle.color('cornflower blue')
+                if type & 2 == 2:
+                    turtle.color('dark turquoise')
 
             turtle.circle(SCALE * self.miss.circle_radius)   
 
