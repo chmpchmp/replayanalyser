@@ -1,5 +1,4 @@
 import turtle
-from PIL import Image
 
 WINDOW_HEIGHT = 540
 WINDOW_WIDTH = 960
@@ -19,7 +18,7 @@ class Display:
 
         self.draw_canvas()
 
-        #turtle.getscreen().getcanvas().postscript(file = 'test.eps')
+        turtle.getscreen().getcanvas().postscript(file = 'test.eps')
 
         turtle.exitonclick()
 
@@ -53,7 +52,10 @@ class Display:
             turtle.pendown()
 
             if time == self.miss.hit_object_timing:
-                turtle.color('chocolate') 
+                if type & 1 == 1:
+                    turtle.color('chocolate')
+                if type & 2 == 2:
+                    turtle.color('burlywood') 
             else:
                 if type & 1 == 1:
                     turtle.color('cornflower blue')
