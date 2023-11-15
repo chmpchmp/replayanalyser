@@ -1,7 +1,7 @@
+from settings import Settings
 from replay import Replay
 from analyser import Analyser
 
-from dotenv import load_dotenv
 import os
 import unittest
 
@@ -9,8 +9,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_blade_dance(self):
         replay_path = r"sample_replays\chmpchmp - Ni-Sokkususu - Blade Dance [Kneesocks] (2023-10-21) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -25,8 +24,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_sakura_no_uta(self):
         replay_path = r"sample_replays\chmpchmp - Hana - Sakura no Uta [Euphoria] (2023-01-27) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -41,8 +39,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_hitorigoto(self):
         replay_path = r"sample_replays\chmpchmp - ClariS - Hitorigoto -TV MIX- [Soliloquy] (2023-10-31) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -57,8 +54,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_ame_to_asphalt(self):
         replay_path = r"sample_replays\chmpchmp - 40mP feat. yuikonnu - Ame to Asphalt [Rain] (2023-11-03) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -73,8 +69,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_flamingo(self):
         replay_path = r"sample_replays\chmpchmp - Kero Kero Bonito - Flamingo (WTN3 Remix) [Multi Color] (2023-11-05) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -89,8 +84,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_super_nuko_world(self):
         replay_path = r"sample_replays\chmpchmp - yuikonnu & ayaponzu - Super Nuko World [Guy's Extra] (2023-11-05) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -105,8 +99,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_the_pretender(self):
         replay_path = r"sample_replays\chmpchmp - Infected Mushroom - The Pretender [Pretender] (2023-11-06) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -122,8 +115,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_all_eyes_on_me(self):
         replay_path = r"sample_replays\chmpchmp - Fox Stevenson - All Eyes On Me (Cut Ver.) [Gracefully Hallucinate] (2023-11-08) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -138,8 +130,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_sidetracked_day(self):
         replay_path = r"sample_replays\chmpchmp - VINXIS - Sidetracked Day [Daydream] (2023-10-29) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -154,8 +145,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_lazybaby(self):
         replay_path = r"sample_replays\chmpchmp - Dove Cameron - LazyBaby [Hard] (2023-08-06) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -170,8 +160,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_colorful(self):
         replay_path = r"sample_replays\chmpchmp - HAG - Colorful [Fiery's Extreme] (2023-10-27) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -186,8 +175,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_colorful_dnb(self):
         replay_path = r"sample_replays\chmpchmp - Sawai Miku - Colorful. (Asterisk DnB Remix) [Megumi] (2022-11-11) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -202,8 +190,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_senpai(self):
         replay_path = r"sample_replays\chmpchmp - HoneyWorks meets TrySail - Senpai. [Graduation] (2023-11-05) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -218,8 +205,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_bocchi(self):
         replay_path = r"sample_replays\chmpchmp - kessoku band - Guitar to Kodoku to Aoi Hoshi [Akitoshi's Extreme] (2023-10-16) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
@@ -234,8 +220,7 @@ class AnalyserTestMethods(unittest.TestCase):
     def test_replay_ikenai_borderline(self):
         replay_path = r"sample_replays\chmpchmp - WALKURE - Ikenai Borderline (Speed Up Ver.) [Your voice may even reach the heavens one day] (2023-04-28) Osu.osr"
 
-        load_dotenv()
-        songs_directory = os.getenv('osu_songs_directory')
+        songs_directory = Settings().songs_directory
 
         replay = Replay(replay_path)
         analyser = Analyser(replay_path, songs_directory)
