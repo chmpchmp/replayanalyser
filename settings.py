@@ -6,7 +6,6 @@ class Settings:
     def __init__(self):
         settings = configparser.ConfigParser()
         settings.read('settings.ini')
-
         load_dotenv()
 
         self.api_key = settings['DEFAULT']['api_key']
@@ -17,7 +16,7 @@ class Settings:
         self.osu_directory = settings['DEFAULT']['osu_directory']
 
         if len(self.osu_directory) == 0:
-            self.osu_directory = os.getenv('osu_songs_directory')
+            self.osu_directory = os.getenv('osu_directory')
 
         self.songs_directory = f'{self.osu_directory}\Songs'
         self.replay_directory = f'{self.osu_directory}\Replays'
