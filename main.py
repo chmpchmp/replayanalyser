@@ -8,9 +8,8 @@ def run():
     replay_path = input()
     index = int(input())
 
-    analyser = Analyser(replay_path, Settings().songs_directory)
+    analyser = Analyser(replay_path, settings.songs_directory)
     display = Display(analyser.miss_data[index])
  
 if __name__ == '__main__':
     run()
-
