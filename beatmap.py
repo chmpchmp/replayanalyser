@@ -55,8 +55,6 @@ class Beatmap:
         return cursor_timings
 
     def fetch_beatmap_data(self, beatmap_hash: str) -> dict:
-        #load_dotenv()
-        #response = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={os.getenv('api_key')}&h={beatmap_hash}")
         response = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={self.settings.api_key}&h={beatmap_hash}")
         return response.json()[0]
     
