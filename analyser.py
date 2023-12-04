@@ -1,7 +1,7 @@
 from beatmap import Beatmap
 from miss import Miss
 
-MILLISECOND_INTERVAL = 500
+MILLISECOND_INTERVAL = 200
 
 class Analyser:
     def __init__(self, replay_path: str, songs_directory: str):
