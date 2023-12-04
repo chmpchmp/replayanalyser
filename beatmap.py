@@ -6,6 +6,9 @@ import requests
 import os
 import pathlib
 
+class APIKeyError(Exception):
+    pass
+
 class GameModeError(Exception):
     pass
 
@@ -59,6 +62,10 @@ class Beatmap:
     @staticmethod
     def fetch_beatmap_data(api_key: str, beatmap_hash: str) -> dict:
         response = requests.get(f"https://osu.ppy.sh/api/get_beatmaps?k={api_key}&h={beatmap_hash}")
+
+        if response.status_code != 200:
+            raise APIKeyError('API key is not valid')
+        
         return response.json()[0]
     
     @staticmethod
