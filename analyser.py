@@ -1,7 +1,7 @@
 from beatmap import Beatmap
 from miss import Miss
 
-MILLISECOND_INTERVAL = 300
+MILLISECOND_INTERVAL = 500
 
 class Analyser:
     def __init__(self, replay_path: str, songs_directory: str):
@@ -53,7 +53,7 @@ class Analyser:
                     miss_cursor_data = [point for point in cursor_data if hit_object_data[i][2] - MILLISECOND_INTERVAL <= point[0] <= hit_object_data[i][2] + MILLISECOND_INTERVAL]
                     miss_cursor_input_data = [point for point in active_cursor_points if hit_object_data[i][2] - MILLISECOND_INTERVAL <= point[0] <= hit_object_data[i][2] + MILLISECOND_INTERVAL]
 
-                    self.miss_data.append(Miss(miss_hit_object_data, miss_cursor_data, hit_object_data[i][2], miss_cursor_input_data, circle_radius))
+                    self.miss_data.append(Miss(miss_hit_object_data, hit_object_data[i][2], miss_cursor_data, miss_cursor_input_data, circle_radius))
 
                     # set the window to the maximum timing to account for notelock
                     previous_hit = [hit_object_data[i][2] + self.beatmap.hit_window, -1, -1, -1]
@@ -64,8 +64,8 @@ class Analyser:
         active_cursor_points = []
 
         for i in range(len(cursor_timings)-1):
+            # do not track inputs during breaks
             if not self.in_interval(cursor_timings[i+1][0], self.beatmap.break_windows):
-                # do not track inputs during breaks
                 if self.detect_key_one(cursor_timings[i][3], cursor_timings[i+1][3]):
                     active_cursor_points.append(cursor_timings[i+1])
                     self.key_one_count += 1
