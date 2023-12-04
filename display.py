@@ -10,8 +10,6 @@ SCALE = PLAYFIELD_HEIGHT / 384
 
 INPUT_CIRCLE_RADIUS = 2
 
-WINDOW_TASKBAR_HEIGHT = 80
-
 class Display:
     def __init__(self, miss):
         self.miss = miss
@@ -38,12 +36,12 @@ class Display:
         turtle.color('grey')
         turtle.penup()
 
-        turtle.goto((self.canvas_x(PLAYFIELD_WIDTH), self.canvas_y(PLAYFIELD_HEIGHT)))
+        turtle.goto((self.canvas_x(512), self.canvas_y(384)))
         turtle.pendown()
-        turtle.goto((self.canvas_x(0), self.canvas_y(PLAYFIELD_HEIGHT)))
+        turtle.goto((self.canvas_x(0), self.canvas_y(384)))
         turtle.goto((self.canvas_x(0), self.canvas_y(0)))
-        turtle.goto((self.canvas_x(PLAYFIELD_WIDTH), self.canvas_y(0)))
-        turtle.goto((self.canvas_x(PLAYFIELD_WIDTH), self.canvas_y(PLAYFIELD_HEIGHT)))
+        turtle.goto((self.canvas_x(512), self.canvas_y(0)))
+        turtle.goto((self.canvas_x(512), self.canvas_y(384)))
         turtle.penup()
 
     def draw_hit_objects(self):
@@ -90,7 +88,7 @@ class Display:
             turtle.penup()
 
     def canvas_x(self, x: str) -> int:
-        return SCALE * (int(x) - 0.5 * PLAYFIELD_WIDTH)
+        return SCALE * (int(x) - 0.5 * 512)
 
     def canvas_y(self, y: str) -> int:
-        return (-SCALE * (int(y) - 0.5 * PLAYFIELD_WIDTH)) - 0.02 * PLAYFIELD_HEIGHT - WINDOW_TASKBAR_HEIGHT
+        return (-SCALE * (int(y) - 0.5 * 384))
