@@ -33,7 +33,8 @@ class Replay:
         if self.mods_used & 8388608 == 8388608:
             self.target_practice_mod = self.decode_data('d')
 
-    def open_file(self, path: str) -> bytes:
+    @staticmethod        
+    def open_file(path: str) -> bytes:
         file = open(pathlib.Path(path), 'rb')
         data = file.read()
         file.close()
