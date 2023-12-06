@@ -30,7 +30,7 @@ class Beatmap:
         self.hit_window_300 = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_300)
         self.hit_window_100 = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_100)
         self.hit_window_50 = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_50)
-        self.hit_window = self.calculate_hit_window(float(self.data['diff_overall']), int(self.replay.mods_used), self.calculate_hit_window_50)
+        self.hit_window = self.hit_window_50
 
         self.break_windows = self.fetch_break_windows(self.difficulty_data, self.cursor_data, self.hit_object_data, self.hit_window)
 
