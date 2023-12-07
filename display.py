@@ -1,3 +1,5 @@
+from miss import Miss
+
 import turtle
 from PIL import Image
 
@@ -12,7 +14,7 @@ SCALE = PLAYFIELD_HEIGHT / 384
 INPUT_CIRCLE_RADIUS = 2
 
 class Display:
-    def __init__(self, miss):
+    def __init__(self, miss: Miss):
         self.miss = miss
 
         self.draw_canvas()
