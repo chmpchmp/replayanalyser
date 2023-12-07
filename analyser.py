@@ -12,17 +12,15 @@ class Analyser:
 
         self.miss_count = 0          # the amount of combo breaks because of hit circles
         self.slidermiss_count = 0    # the amount of combo breaks because of sliders
-        self.break_count = 0         # miss_count plus slidermiss
+        self.break_count = 0         # miss_count plus slidermiss_count
 
-        self.miss_data = []
+        self.miss_data = self.analyze_replay()
 
-        self.analyze_replay()
-
-        #print(self.miss_count, self.sliderbreak_count, self.break_count)
-
-    def analyze_replay(self) -> None:
+    def analyze_replay(self) -> list():
         # to do: account for hit window changes after breaks
         # to do: account for breaks from leaving sliderball and leaving buzzslider too early
+
+        miss_data = []
 
         active_cursor_points = self.fetch_active_cursor_points(self.beatmap.cursor_data)
         hit_object_data = self.beatmap.hit_object_data
@@ -53,12 +51,14 @@ class Analyser:
                     miss_cursor_data = [point for point in cursor_data if hit_object_data[i][2] - MILLISECOND_INTERVAL <= point[0] <= hit_object_data[i][2] + MILLISECOND_INTERVAL]
                     miss_cursor_input_data = [point for point in active_cursor_points if hit_object_data[i][2] - MILLISECOND_INTERVAL <= point[0] <= hit_object_data[i][2] + MILLISECOND_INTERVAL]
 
-                    self.miss_data.append(Miss(miss_hit_object_data, hit_object_data[i][2], miss_cursor_data, miss_cursor_input_data, circle_radius))
+                    miss_data.append(Miss(miss_hit_object_data, hit_object_data[i][2], miss_cursor_data, miss_cursor_input_data, circle_radius))
 
                     # set the window to the maximum timing to account for notelock
                     previous_hit = [hit_object_data[i][2] + self.beatmap.hit_window, -1, -1, -1]
                 else:
                     previous_hit = possible_points[0]
+
+        return miss_data
 
     def fetch_active_cursor_points(self, cursor_timings: list(list())) -> list(list()):
         active_cursor_points = []
