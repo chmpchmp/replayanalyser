@@ -1,4 +1,5 @@
 import turtle
+from PIL import Image
 
 WINDOW_HEIGHT = 540
 WINDOW_WIDTH = 960
@@ -16,7 +17,10 @@ class Display:
 
         self.draw_canvas()
 
-        turtle.getscreen().getcanvas().postscript(file = 'test.eps')
+        canvas = turtle.getscreen().getcanvas()
+        
+        canvas.postscript(file = 'test.eps')
+        #self.save_canvas(canvas, "test")
 
         turtle.exitonclick()
 
@@ -86,6 +90,11 @@ class Display:
             turtle.end_fill()
 
             turtle.penup()
+
+    def save_canvas(self, canvas: turtle.ScrolledCanvas, file_name: str):
+        canvas.postscript(file_name + '.eps') 
+        image = Image.open(file_name + '.eps') 
+        image.save(file_name + '.png', 'png') 
 
     def canvas_x(self, x: str) -> int:
         return SCALE * (int(x) - 0.5 * 512)
