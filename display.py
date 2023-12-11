@@ -13,7 +13,7 @@ SCALE = (0.8 * WINDOW_HEIGHT) / PLAYFIELD_HEIGHT
 INPUT_CIRCLE_RADIUS = 2
 
 class Display:
-    def __init__(self, miss: Miss):
+    def __init__(self, miss: Miss, output_file: str):
         self.miss = miss
 
         self.image = Image.new('RGB', (WINDOW_WIDTH, WINDOW_HEIGHT), (255, 255, 255))
@@ -21,8 +21,7 @@ class Display:
 
         self.draw_canvas()
 
-        self.image.show()
-        self.image.save('canvas.png')
+        self.image.save(output_file + '.png')
 
     def draw_canvas(self) -> None:
         self.draw_playfield()
