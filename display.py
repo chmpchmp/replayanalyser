@@ -1,15 +1,14 @@
 from miss import Miss
 
-import turtle
-from PIL import Image
+from PIL import Image, ImageDraw
 
-WINDOW_HEIGHT = 540
-WINDOW_WIDTH = 960
+WINDOW_HEIGHT = 720
+WINDOW_WIDTH = 1280
 
-PLAYFIELD_HEIGHT = 0.8 * WINDOW_HEIGHT
-PLAYFIELD_WIDTH = (4 * PLAYFIELD_HEIGHT) / 3
+PLAYFIELD_HEIGHT = 384
+PLAYFIELD_WIDTH = 512
 
-SCALE = PLAYFIELD_HEIGHT / 384
+SCALE = (0.8 * WINDOW_HEIGHT) / PLAYFIELD_HEIGHT
 
 INPUT_CIRCLE_RADIUS = 2
 
@@ -17,89 +16,50 @@ class Display:
     def __init__(self, miss: Miss):
         self.miss = miss
 
+        self.image = Image.new('RGB', (WINDOW_WIDTH, WINDOW_HEIGHT), (255, 255, 255))
+        self.draw = ImageDraw.Draw(self.image) 
+
         self.draw_canvas()
 
-        canvas = turtle.getscreen().getcanvas()
-        
-        canvas.postscript(file = 'test.eps')
-        #self.save_canvas(canvas, "test")
+        self.image.show()
+        self.image.save('canvas.png')
 
-        turtle.exitonclick()
-
-    def draw_canvas(self):
-        self.setup()
+    def draw_canvas(self) -> None:
         self.draw_playfield()
         self.draw_hit_objects()
         self.draw_cursor_trail()
         self.draw_cursor_inputs()
 
-    def setup(self):
-        turtle.setup(WINDOW_WIDTH, WINDOW_HEIGHT)
-        turtle.speed('fastest')
-        turtle.hideturtle()
+    def draw_playfield(self) -> None:
+        playfield_coordinates = [(0, 0), (0, 384), (512, 384), (512, 0), (0, 0)]
+        self.draw_lines(playfield_coordinates, "grey")
 
-    def draw_playfield(self):
-        turtle.color('grey')
-        turtle.penup()
-
-        turtle.goto((self.canvas_x(512), self.canvas_y(384)))
-        turtle.pendown()
-        turtle.goto((self.canvas_x(0), self.canvas_y(384)))
-        turtle.goto((self.canvas_x(0), self.canvas_y(0)))
-        turtle.goto((self.canvas_x(512), self.canvas_y(0)))
-        turtle.goto((self.canvas_x(512), self.canvas_y(384)))
-        turtle.penup()
-
-    def draw_hit_objects(self):
+    def draw_hit_objects(self) -> None:
         for x, y, time, type in self.miss.hit_object_data:
-            turtle.goto(self.canvas_x(x), self.canvas_y(y) - (SCALE * self.miss.circle_radius))
-            turtle.pendown()
-
             if time == self.miss.hit_object_timing:
-                if type & 1 == 1:
-                    turtle.color('chocolate')
-                if type & 2 == 2:
-                    turtle.color('burlywood') 
+                self.draw_ellipse((x, y), SCALE * self.miss.circle_radius, 'red')
             else:
-                if type & 1 == 1:
-                    turtle.color('cornflower blue')
-                if type & 2 == 2:
-                    turtle.color('dark turquoise')
+                self.draw_ellipse((x, y), SCALE * self.miss.circle_radius, 'black')
+            
+    def draw_cursor_trail(self) -> None:
+        cursor_data = [(x, y) for time, x, y, input in self.miss.cursor_data]
+        self.draw_lines(cursor_data, "black")
 
-            turtle.circle(SCALE * self.miss.circle_radius)   
-
-            turtle.penup()
-
-    def draw_cursor_trail(self):
-        turtle.goto(self.canvas_x(self.miss.cursor_data[0][1]), self.canvas_y(self.miss.cursor_data[0][2]))
-        turtle.pendown()
-
-        for time, x, y, input in self.miss.cursor_data:
-            turtle.color('black')
-            turtle.goto(self.canvas_x(x), self.canvas_y(y))
-
-        turtle.penup()
-
-    def draw_cursor_inputs(self):
+    def draw_cursor_inputs(self) -> None:
         for time, x, y, input in self.miss.cursor_input_data:
-            turtle.goto(self.canvas_x(x), self.canvas_y(y) - INPUT_CIRCLE_RADIUS)
-            turtle.pendown()
+            self.draw_ellipse((x, y), SCALE * INPUT_CIRCLE_RADIUS, 'blue',)
 
-            turtle.color('red')
+    def draw_lines(self, points: list, color: str, line_width = 0) -> None:
+        transformed_points = [(self.canvas_x(x), self.canvas_y(y)) for x, y in points]
+        self.draw.line(transformed_points, fill = color, width = line_width)
 
-            turtle.begin_fill()
-            turtle.circle(INPUT_CIRCLE_RADIUS)   
-            turtle.end_fill()
-
-            turtle.penup()
-
-    def save_canvas(self, canvas: turtle.ScrolledCanvas, file_name: str):
-        canvas.postscript(file_name + '.eps') 
-        image = Image.open(file_name + '.eps') 
-        image.save(file_name + '.png', 'png') 
+    def draw_ellipse(self, point: tuple, circle_radius: float, border_color: str, fill_color = None) -> None:
+        transformed_point = (self.canvas_x(point[0]), self.canvas_y(point[1]))
+        point_coordinates = [(transformed_point[0] - circle_radius, transformed_point[1] - circle_radius), (transformed_point[0] + circle_radius, transformed_point[1] + circle_radius)]
+        self.draw.ellipse(point_coordinates, outline = border_color, fill = fill_color) 
 
     def canvas_x(self, x: str) -> int:
-        return SCALE * (int(x) - 0.5 * 512)
+        return SCALE * (int(x) - 0.5 * PLAYFIELD_WIDTH) + 0.5 * WINDOW_WIDTH
 
     def canvas_y(self, y: str) -> int:
-        return (-SCALE * (int(y) - 0.5 * 384))
+        return SCALE * (int(y) - 0.5 * PLAYFIELD_HEIGHT) + 0.5 * WINDOW_HEIGHT
