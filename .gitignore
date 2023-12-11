@@ -4,5 +4,4 @@ __pycache__/
 .env
 
 # temporary files
-requirements.txt
 canvas.png
