@@ -12,16 +12,16 @@ SCALE = (0.8 * WINDOW_HEIGHT) / PLAYFIELD_HEIGHT
 
 INPUT_CIRCLE_RADIUS = 2
 
-class Display:
-    def __init__(self, miss: Miss, output_file: str):
+class Canvas:
+    def __init__(self, miss: Miss):
         self.miss = miss
 
         self.image = Image.new('RGB', (WINDOW_WIDTH, WINDOW_HEIGHT), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image) 
 
+    def export(self, output_file: str) -> None:
         self.draw_canvas()
-
-        self.image.save(output_file + '.png')
+        self.export_canvas(output_file)
 
     def draw_canvas(self) -> None:
         self.draw_playfield()
@@ -57,8 +57,13 @@ class Display:
         point_coordinates = [(transformed_point[0] - circle_radius, transformed_point[1] - circle_radius), (transformed_point[0] + circle_radius, transformed_point[1] + circle_radius)]
         self.draw.ellipse(point_coordinates, outline = border_color, fill = fill_color) 
 
-    def canvas_x(self, x: str) -> int:
+    @staticmethod
+    def canvas_x(x: str) -> int:
         return SCALE * (int(x) - 0.5 * PLAYFIELD_WIDTH) + 0.5 * WINDOW_WIDTH
 
-    def canvas_y(self, y: str) -> int:
+    @staticmethod
+    def canvas_y(y: str) -> int:
         return SCALE * (int(y) - 0.5 * PLAYFIELD_HEIGHT) + 0.5 * WINDOW_HEIGHT
+    
+    def export_canvas(self, output_file: str) -> None:
+        self.image.save(output_file + '.png')
