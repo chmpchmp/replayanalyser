@@ -1,15 +1,8 @@
-from settings import Settings
-from analyser import Analyser
-from display import Display
+from process import Process
 
 def main():
-    settings = Settings()
-    replay_path = r"sample_replays\chmpchmp - Sawai Miku - Colorful. (Asterisk DnB Remix) [Megumi] (2022-11-11) Osu.osr"
-
-    analyser = Analyser(replay_path, settings.songs_directory)
-
-    for i, miss in enumerate(analyser.miss_data):
-        display = Display(miss, f'canvas/{i:06}')
+    replay_path = r"sample_replays\chmpchmp - Suzuyu - Euphorium [The Dream Of White Star.] (2022-10-28) Osu.osr"
+    process = Process(replay_path)
  
 if __name__ == '__main__':
     main()
