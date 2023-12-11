@@ -17,7 +17,6 @@ class Analyser:
         self.miss_data = self.analyze_replay()
 
     def analyze_replay(self) -> list():
-        # to do: account for hit window changes after breaks
         # to do: account for breaks from leaving sliderball and leaving buzzslider too early
 
         miss_data = []
@@ -76,27 +75,6 @@ class Analyser:
 
         return active_cursor_points
     
-    def in_interval(self, value: int, intervals: list(list())) -> bool:
-        for interval in intervals:
-            if interval[0] <= value <= interval[1]:
-                return True
-            
-        return False
-
-    def detect_key_one(self, first_timing: int, second_timing: int) -> bool:
-        return first_timing & 1 == 0 and second_timing & 1 == 1
-    
-    def detect_key_two(self, first_timing: int, second_timing: int) -> bool:
-        return first_timing & 2 == 0 and second_timing & 2 == 2
-    
-    def calculate_points_within_timing(self, object_timing: float, hit_window: float, previous_max_hit_timing: float, cursor_points: list) -> list:
-        minimum_timing = previous_max_hit_timing
-        maximum_timing = object_timing + hit_window
-        return [point for point in cursor_points if minimum_timing < point[0] < maximum_timing]
-    
-    def calculate_points_in_circle(self, center_x: int, center_y: int, radius: float, cursor_points: list) -> list:
-        return [point for point in cursor_points if (point[1] - center_x)**2 + (point[2] - center_y)**2 < radius**2]
-
     def increment_miss_count(self, object_type: int) -> None:
         if object_type & 1 == 1:
             self.miss_count += 1
@@ -104,3 +82,29 @@ class Analyser:
             self.slidermiss_count += 1
 
         self.break_count += 1
+    
+    @staticmethod
+    def in_interval(value: int, intervals: list(list())) -> bool:
+        for interval in intervals:
+            if interval[0] <= value <= interval[1]:
+                return True
+            
+        return False
+
+    @staticmethod
+    def detect_key_one(first_timing: int, second_timing: int) -> bool:
+        return first_timing & 1 == 0 and second_timing & 1 == 1
+    
+    @staticmethod
+    def detect_key_two(first_timing: int, second_timing: int) -> bool:
+        return first_timing & 2 == 0 and second_timing & 2 == 2
+    
+    @staticmethod
+    def calculate_points_within_timing(object_timing: float, hit_window: float, previous_max_hit_timing: float, cursor_points: list) -> list:
+        minimum_timing = previous_max_hit_timing
+        maximum_timing = object_timing + hit_window
+        return [point for point in cursor_points if minimum_timing < point[0] < maximum_timing]
+
+    @staticmethod
+    def calculate_points_in_circle(center_x: int, center_y: int, radius: float, cursor_points: list) -> list:
+        return [point for point in cursor_points if (point[1] - center_x)**2 + (point[2] - center_y)**2 < radius**2]
