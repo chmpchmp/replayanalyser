@@ -18,5 +18,5 @@ class Settings:
         if len(self.osu_directory) == 0:
             self.osu_directory = os.getenv('osu_directory')
 
-        self.songs_directory = f'{self.osu_directory}\Songs'
-        self.replay_directory = f'{self.osu_directory}\Replays'
+        self.songs_directory = f'{self.osu_directory}\\Songs'
+        self.replay_directory = f'{self.osu_directory}\\Replays'
