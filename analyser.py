@@ -16,7 +16,7 @@ class Analyser:
 
         self.miss_data = self.analyze_replay()
 
-    def analyze_replay(self) -> list():
+    def analyze_replay(self) -> list:
         # to do: account for breaks from leaving sliderball and leaving buzzslider too early
 
         miss_data = []
