@@ -1,3 +1,5 @@
 pip install python-dotenv
 pip install requests
 pip install pillow
+pip install pyqt5
+pip install pyqt5-tools
