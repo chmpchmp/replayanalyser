@@ -44,6 +44,8 @@ class Canvas:
         cursor_data = [(x, y) for time, x, y, input in self.miss.cursor_data]
         self.draw_lines(cursor_data, "black")
 
+        self.draw_ellipse((self.miss.cursor_data[-1][1], self.miss.cursor_data[-1][2]), SCALE * INPUT_CIRCLE_RADIUS, 'black', 'yellow')
+
     def draw_cursor_inputs(self) -> None:
         for time, x, y, input in self.miss.cursor_input_data:
             self.draw_ellipse((x, y), SCALE * INPUT_CIRCLE_RADIUS, 'blue',)
