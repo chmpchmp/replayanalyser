@@ -2,10 +2,12 @@ import configparser
 from dotenv import load_dotenv
 import os
 
+SETTINGS_PATH = 'settings.ini'
+
 class Settings:
     def __init__(self):
         settings = configparser.ConfigParser()
-        settings.read('settings.ini')
+        settings.read(SETTINGS_PATH)
         load_dotenv()
 
         self.api_key = settings['DEFAULT']['api_key']
