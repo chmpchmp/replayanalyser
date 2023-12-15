@@ -15,8 +15,6 @@ class Window(qtw.QMainWindow):
         self.button = qtw.QPushButton(self)
         self.button.clicked.connect(self.select_file_clicker)
 
-        self.show()
-
     def select_file_clicker(self) -> None:
         settings = Settings()
         file_name = qtw.QFileDialog.getOpenFileName(caption = 'Select a replay', directory = settings.replay_directory, filter = '*.osr')
@@ -33,4 +31,5 @@ class Window(qtw.QMainWindow):
 if __name__ == '__main__':
     app = qtw.QApplication([])
     window = Window()
+    window.show()
     app.exec_()
