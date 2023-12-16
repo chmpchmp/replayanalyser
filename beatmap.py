@@ -1,18 +1,10 @@
 from settings import Settings
 from replay import Replay
+from exception import APIKeyError, GameModeError, DirectoryError
 
 import requests
 import os
 import pathlib
-
-class APIKeyError(Exception):
-    pass
-
-class GameModeError(Exception):
-    pass
-
-class DirectoryError(Exception):
-    pass
 
 class Beatmap:
     def __init__(self, replay_path: str, songs_directory: str):
@@ -73,7 +65,7 @@ class Beatmap:
 
         for directory in subdirectories:
             if directory.split(' ')[0] == beatmapset_id:
-                return f'{songs_directory}\{directory}'
+                return f'{songs_directory}\\{directory}'
         
         raise DirectoryError('Beatmap of replay could not be found in songs directory')
     
@@ -81,7 +73,7 @@ class Beatmap:
     def fetch_difficulty_data(beatmap_directory: str, beatmap_id: str) -> str:
         for file_name in os.listdir(beatmap_directory):
             if file_name.endswith('.osu'):
-                file = open(pathlib.Path(f'{beatmap_directory}\{file_name}'), encoding = 'utf-8')
+                file = open(pathlib.Path(f'{beatmap_directory}\\{file_name}'), encoding = 'utf-8')
                 data = file.read()
                 for line in data.split('\n'):
                     if line == f'BeatmapID:{beatmap_id}':
