@@ -11,19 +11,24 @@ class Data:
     def __init__(self, replay_path: str):
         settings = Settings()
 
+        self.beatmap_title = ''
+
         try:
             analyser = Analyser(replay_path, settings.songs_directory)
-            self.status = 'Replay analysis complete'
-        except APIKeyError as message:
-            self.status = message
-        except GameModeError as message:
-            self.status = message
-        except DirectoryError as message:
-            self.status = message
 
-        self.check_directory(FRAMES_DIRECTORY)
-        self.clear_directory(FRAMES_DIRECTORY)
-        self.generate_frames(FRAMES_DIRECTORY, analyser.miss_data)
+            self.check_directory(FRAMES_DIRECTORY)
+            self.clear_directory(FRAMES_DIRECTORY)
+            self.generate_frames(FRAMES_DIRECTORY, analyser.miss_data)
+
+            self.beatmap_title = analyser.beatmap.title
+
+            self.status = 'Replay analysis complete!'
+        except APIKeyError as message:
+            self.status = f'ERROR: {str(message)}'
+        except GameModeError as message:
+            self.status = f'ERROR: {str(message)}'
+        except DirectoryError as message:
+            self.status = f'ERROR: {str(message)}'
 
     @staticmethod
     def check_directory(directory: str) -> None:
