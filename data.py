@@ -12,6 +12,7 @@ class Data:
         settings = Settings()
 
         self.beatmap_title = ''
+        self.miss_count = 0
 
         try:
             analyser = Analyser(replay_path, settings.songs_directory)
@@ -21,6 +22,7 @@ class Data:
             self.generate_frames(FRAMES_DIRECTORY, analyser.miss_data)
 
             self.beatmap_title = analyser.beatmap.title
+            self.miss_count = analyser.miss_count
 
             self.status = 'Replay analysis complete!'
         except APIKeyError as message:
