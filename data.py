@@ -47,4 +47,4 @@ class Data:
     def generate_frames(directory: str, miss_data: list) -> None:
         for i, miss in enumerate(miss_data):
             canvas = Canvas(miss)
-            canvas.export(f'{directory}\\{i:06}')
+            canvas.export(directory, i)

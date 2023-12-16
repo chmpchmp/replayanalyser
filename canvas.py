@@ -2,8 +2,8 @@ from miss import Miss
 
 from PIL import Image, ImageDraw
 
-WINDOW_HEIGHT = 720
-WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 540
+WINDOW_WIDTH = 960
 
 PLAYFIELD_HEIGHT = 384
 PLAYFIELD_WIDTH = 512
@@ -19,9 +19,9 @@ class Canvas:
         self.image = Image.new('RGB', (WINDOW_WIDTH, WINDOW_HEIGHT), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image) 
 
-    def export(self, output_file: str) -> None:
+    def export(self, directory: str, output_file: int) -> None:
         self.draw_canvas()
-        self.export_canvas(output_file)
+        self.export_canvas(directory, output_file)
 
     def draw_canvas(self) -> None:
         self.draw_playfield()
@@ -67,5 +67,5 @@ class Canvas:
     def canvas_y(y: str) -> int:
         return SCALE * (int(y) - 0.5 * PLAYFIELD_HEIGHT) + 0.5 * WINDOW_HEIGHT
     
-    def export_canvas(self, output_file: str) -> None:
-        self.image.save(output_file + '.png')
+    def export_canvas(self, directory: str, output_file: int) -> None:
+        self.image.save(f'{directory}\\{output_file:06}.png')
