@@ -1,35 +1,93 @@
-import PyQt5.QtWidgets as qtw
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QGraphicsPixmapItem
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5 import QtCore
 
 from settings import Settings
 from data import Data
 
-class Window(qtw.QMainWindow):
+class Window(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.window_width = 1280
-        self.window_height = 720
-        self.setMinimumSize(self.window_width, self.window_height)
+        window_width = 1280
+        window_height = 720
+        self.setFixedSize(window_width, window_height)
+        self.setWindowIcon(QIcon('assets\\favicon.png'))
         self.setWindowTitle('replayanalyser')
 
-        self.button = qtw.QPushButton(self)
-        self.button.clicked.connect(self.select_file_clicker)
+        layout = QVBoxLayout()
+
+        self.beatmap_title = QLabel('Title')
+
+        self.file_number = 0
+        self.max_file_number = 0
+
+        self.image = QLabel()
+        self.image.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.previous_frame_button = QPushButton('Previous frame')
+        self.previous_frame_button.clicked.connect(self.select_previous_frame)
+        self.previous_frame_button.setEnabled(False)
+
+        self.next_frame_button = QPushButton('Next frame')
+        self.next_frame_button.clicked.connect(self.select_next_frame)
+        self.next_frame_button.setEnabled(False)
+
+        self.select_file_button = QPushButton('Select replay')
+        self.select_file_button.clicked.connect(self.select_file_clicker)
+
+        self.status = QLabel('Status')
+        self.status.setAlignment(QtCore.Qt.AlignCenter)
+
+        layout.addWidget(self.beatmap_title)
+        layout.addWidget(self.image)
+        layout.addWidget(self.previous_frame_button)
+        layout.addWidget(self.next_frame_button)
+        layout.addWidget(self.select_file_button)
+        layout.addWidget(self.status)
+
+        self.setLayout(layout)
 
     def select_file_clicker(self) -> None:
+        self.status.setText('Analysing replay...')
         settings = Settings()
-        file_name = qtw.QFileDialog.getOpenFileName(caption = 'Select a replay', directory = settings.replay_directory, filter = '*.osr')
+        file_name = QFileDialog.getOpenFileName(caption = 'Select a replay', directory = settings.replay_directory, filter = '*.osr')
         replay_path = file_name[0]
         
         if replay_path != '':
-            self.run_analyser(replay_path)
-            print('Analysing replay...')
+            data = Data(replay_path)
+            self.beatmap_title.setText(data.beatmap_title)
+            self.file_number = 0
+            self.max_file_number = data.miss_count - 1
+            self.image.setPixmap(QPixmap(f'frames\\{self.file_number:06}.png'))
 
-    @staticmethod
-    def run_analyser(replay_path: str) -> None:
-        data = Data(replay_path)
- 
+            if self.max_file_number != 0:
+                self.next_frame_button.setEnabled(True)
+                
+            self.status.setText(data.status)
+
+    def select_previous_frame(self) -> None:
+        if self.file_number >= self.max_file_number:
+            self.next_frame_button.setEnabled(True)
+
+        self.file_number -= 1
+        self.image.setPixmap(QPixmap(f'frames\\{self.file_number:06}.png'))
+
+        if self.file_number <= 0:
+            self.previous_frame_button.setEnabled(False)
+
+    def select_next_frame(self) -> None:
+        if self.file_number <= 0:
+            self.previous_frame_button.setEnabled(True)
+
+        self.file_number += 1
+        self.image.setPixmap(QPixmap(f'frames\\{self.file_number:06}.png'))
+
+        if self.file_number >= self.max_file_number:
+            self.next_frame_button.setEnabled(False)
+        
 if __name__ == '__main__':
-    app = qtw.QApplication([])
+    app = QApplication([])
     window = Window()
     window.show()
     app.exec_()
