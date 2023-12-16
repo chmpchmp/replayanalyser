@@ -1,6 +1,7 @@
 from settings import Settings
 from analyser import Analyser
 from canvas import Canvas
+from exception import APIKeyError, GameModeError, DirectoryError
 
 import os
 
@@ -9,7 +10,16 @@ FRAMES_DIRECTORY = 'frames'
 class Data:
     def __init__(self, replay_path: str):
         settings = Settings()
-        analyser = Analyser(replay_path, settings.songs_directory)
+
+        try:
+            analyser = Analyser(replay_path, settings.songs_directory)
+            self.status = 'Replay analysis complete'
+        except APIKeyError as message:
+            self.status = message
+        except GameModeError as message:
+            self.status = message
+        except DirectoryError as message:
+            self.status = message
 
         self.check_directory(FRAMES_DIRECTORY)
         self.clear_directory(FRAMES_DIRECTORY)
@@ -32,4 +42,4 @@ class Data:
     def generate_frames(directory: str, miss_data: list) -> None:
         for i, miss in enumerate(miss_data):
             canvas = Canvas(miss)
-            canvas.export(f'{directory}\{i:06}')
+            canvas.export(f'{directory}\\{i:06}')
