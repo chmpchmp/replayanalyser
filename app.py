@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QGraphicsPixmapItem
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5 import QtCore
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFileDialog, QGraphicsPixmapItem
+from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5 import uic, QtCore
 
 from settings import Settings
 from data import Data
@@ -9,21 +9,29 @@ class Window(QWidget):
     def __init__(self):
         super().__init__()
 
-        window_width = 1280
-        window_height = 720
-        self.setFixedSize(window_width, window_height)
+        self.window_width = 1280
+        self.window_height = 720
+        self.setFixedSize(self.window_width, self.window_height)
         self.setWindowIcon(QIcon('assets\\favicon.png'))
         self.setWindowTitle('replayanalyser')
 
+        self.file_number = -1
+        self.max_file_number = -1
+        self.miss_timings = []
+
         layout = QVBoxLayout()
+        core_layout = QHBoxLayout()
+        buttons_layout = QVBoxLayout()
 
-        self.beatmap_title = QLabel('Title')
-
-        self.file_number = 0
-        self.max_file_number = 0
+        self.beatmap_title = QLabel()
+        #self.beatmap_title.setFont(QFont('Aller Bold', 12))
 
         self.image = QLabel()
+        self.image.setPixmap(QPixmap())
         self.image.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.select_replay_button = QPushButton('Select replay')
+        self.select_replay_button.clicked.connect(self.select_replay_clicker)
 
         self.previous_frame_button = QPushButton('Previous frame')
         self.previous_frame_button.clicked.connect(self.select_previous_frame)
@@ -33,38 +41,70 @@ class Window(QWidget):
         self.next_frame_button.clicked.connect(self.select_next_frame)
         self.next_frame_button.setEnabled(False)
 
-        self.select_file_button = QPushButton('Select replay')
-        self.select_file_button.clicked.connect(self.select_file_clicker)
+        self.break_label = QLabel()
+        self.break_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.update_break_count()
 
-        self.status = QLabel('Status')
+        self.timing_label = QLabel()
+        self.timing_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.update_timing_count()
+
+        self.status = QLabel()
         self.status.setAlignment(QtCore.Qt.AlignCenter)
 
-        layout.addWidget(self.beatmap_title)
-        layout.addWidget(self.image)
-        layout.addWidget(self.previous_frame_button)
-        layout.addWidget(self.next_frame_button)
-        layout.addWidget(self.select_file_button)
-        layout.addWidget(self.status)
+        buttons_layout.addWidget(self.select_replay_button, 1)
+        buttons_layout.addWidget(self.previous_frame_button, 1)
+        buttons_layout.addWidget(self.next_frame_button, 1)
+        buttons_layout.addWidget(self.break_label, 1)
+        buttons_layout.addWidget(self.timing_label, 1)
+        buttons_layout.addWidget(QLabel(), 20)
+
+        core_layout.addLayout(buttons_layout, 10)
+        core_layout.addWidget(self.image, 90)
+
+        layout.addWidget(self.beatmap_title, 5)
+        layout.addLayout(core_layout, 90)
+        layout.addWidget(self.status, 5)
 
         self.setLayout(layout)
-
-    def select_file_clicker(self) -> None:
-        self.status.setText('Analysing replay...')
+        
+    def select_replay_clicker(self) -> None:
         settings = Settings()
         file_name = QFileDialog.getOpenFileName(caption = 'Select a replay', directory = settings.replay_directory, filter = '*.osr')
         replay_path = file_name[0]
         
         if replay_path != '':
-            data = Data(replay_path)
+            self.status.setText('Analysing replay...')
+            data = Data(replay_path, int(0.85 * self.window_width), int(0.85 * self.window_height))
+            self.max_file_number = data.break_count - 1
             self.beatmap_title.setText(data.beatmap_title)
-            self.file_number = 0
-            self.max_file_number = data.miss_count - 1
-            self.image.setPixmap(QPixmap(f'frames\\{self.file_number:06}.png'))
 
-            if self.max_file_number != 0:
+            self.previous_frame_button.setEnabled(False)
+
+            # when a full combo or error is detected
+            if self.max_file_number == -1:
+                self.next_frame_button.setEnabled(False)
+                self.file_number = -1
+                self.image.setPixmap(QPixmap())
+            
+            # when there is only one break
+            elif self.max_file_number == 0:
+                self.next_frame_button.setEnabled(False)
+                self.file_number = 0
+                self.miss_timings = data.miss_timings
+                self.image.setPixmap(QPixmap(f'frames\\{self.file_number:06}.png'))
+
+            # when there is more than one break
+            else:
                 self.next_frame_button.setEnabled(True)
+                self.file_number = 0
+                self.miss_timings = data.miss_timings
+                self.image.setPixmap(QPixmap(f'frames\\{self.file_number:06}.png'))
+
+            self.update_break_count()
+            self.update_timing_count()
                 
-            self.status.setText(data.status)
+            self.status.setText(data.status_message)
 
     def select_previous_frame(self) -> None:
         if self.file_number >= self.max_file_number:
@@ -76,6 +116,9 @@ class Window(QWidget):
         if self.file_number <= 0:
             self.previous_frame_button.setEnabled(False)
 
+        self.update_break_count()
+        self.update_timing_count()
+
     def select_next_frame(self) -> None:
         if self.file_number <= 0:
             self.previous_frame_button.setEnabled(True)
@@ -85,7 +128,29 @@ class Window(QWidget):
 
         if self.file_number >= self.max_file_number:
             self.next_frame_button.setEnabled(False)
-        
+
+        self.update_break_count()
+        self.update_timing_count()
+
+    def update_break_count(self) -> None:
+        if self.file_number == -1:
+            self.break_label.setText('')
+        else:
+            self.break_label.setText(f'Break: {str(self.file_number+1)}/{str(self.max_file_number+1)}')
+
+    def update_timing_count(self) -> None:
+        if self.file_number == -1:
+            self.timing_label.setText('')
+        else:
+            self.timing_label.setText(f'Timing: {self.convert_milliseconds(self.miss_timings[self.file_number])}')
+
+    @staticmethod
+    def convert_milliseconds(ms: int) -> str:
+        seconds = int((ms / 1000) % 60)
+        minutes = int((ms / (1000 * 60)) % 60)
+        hours = int((ms / (1000 * 60 * 60)) % 24)
+        return f'{hours:02}:{minutes:02}:{seconds:02}'
+
 if __name__ == '__main__':
     app = QApplication([])
     window = Window()
