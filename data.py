@@ -8,29 +8,34 @@ import os
 FRAMES_DIRECTORY = 'frames'
 
 class Data:
-    def __init__(self, replay_path: str):
+    def __init__(self, replay_path: str, width: int, height: int):
         settings = Settings()
 
         self.beatmap_title = ''
-        self.miss_count = 0
+        self.break_count = 0
+        self.miss_timings = []
+
+        self.check_directory(FRAMES_DIRECTORY)
+        self.clear_directory(FRAMES_DIRECTORY)
 
         try:
             analyser = Analyser(replay_path, settings.songs_directory)
 
-            self.check_directory(FRAMES_DIRECTORY)
-            self.clear_directory(FRAMES_DIRECTORY)
-            self.generate_frames(FRAMES_DIRECTORY, analyser.miss_data)
+            self.generate_frames(FRAMES_DIRECTORY, analyser.miss_data, width, height)
 
             self.beatmap_title = analyser.beatmap.title
-            self.miss_count = analyser.miss_count
+            self.break_count = analyser.break_count
 
-            self.status = 'Replay analysis complete!'
+            for miss in analyser.miss_data:
+                self.miss_timings.append(miss.hit_object_timing)
+                
+            self.status_message = 'Replay analysis complete!'
         except APIKeyError as message:
-            self.status = f'ERROR: {str(message)}'
+            self.status_message = f'ERROR: {str(message)}'
         except GameModeError as message:
-            self.status = f'ERROR: {str(message)}'
+            self.status_message = f'ERROR: {str(message)}'
         except DirectoryError as message:
-            self.status = f'ERROR: {str(message)}'
+            self.status_message = f'ERROR: {str(message)}'
 
     @staticmethod
     def check_directory(directory: str) -> None:
@@ -46,7 +51,7 @@ class Data:
                 os.remove(file_path)
 
     @staticmethod
-    def generate_frames(directory: str, miss_data: list) -> None:
+    def generate_frames(directory: str, miss_data: list, width: int, height: int) -> None:
         for i, miss in enumerate(miss_data):
-            canvas = Canvas(miss)
+            canvas = Canvas(miss, width, height)
             canvas.export(directory, i)

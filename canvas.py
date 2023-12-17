@@ -2,21 +2,21 @@ from miss import Miss
 
 from PIL import Image, ImageDraw
 
-WINDOW_HEIGHT = 612
-WINDOW_WIDTH = 1088
-
 PLAYFIELD_HEIGHT = 384
 PLAYFIELD_WIDTH = 512
-
-SCALE = (0.8 * WINDOW_HEIGHT) / PLAYFIELD_HEIGHT
 
 INPUT_CIRCLE_RADIUS = 2
 
 class Canvas:
-    def __init__(self, miss: Miss):
+    def __init__(self, miss: Miss, width: int, height: int):
         self.miss = miss
 
-        self.image = Image.new('RGB', (WINDOW_WIDTH, WINDOW_HEIGHT), (255, 255, 255))
+        self.width = width
+        self.height = height
+
+        self.scale = (0.8 * self.height) / PLAYFIELD_HEIGHT
+
+        self.image = Image.new('RGB', (self.width, self.height), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image) 
 
     def export(self, directory: str, output_file: int) -> None:
@@ -36,19 +36,19 @@ class Canvas:
     def draw_hit_objects(self) -> None:
         for x, y, time, type in self.miss.hit_object_data:
             if time == self.miss.hit_object_timing:
-                self.draw_ellipse((x, y), SCALE * self.miss.circle_radius, 'red')
+                self.draw_ellipse((x, y), self.scale * self.miss.circle_radius, 'red')
             else:
-                self.draw_ellipse((x, y), SCALE * self.miss.circle_radius, 'black')
+                self.draw_ellipse((x, y), self.scale * self.miss.circle_radius, 'black')
             
     def draw_cursor_trail(self) -> None:
         cursor_data = [(x, y) for time, x, y, input in self.miss.cursor_data]
         self.draw_lines(cursor_data, "black")
 
-        self.draw_ellipse((self.miss.cursor_data[-1][1], self.miss.cursor_data[-1][2]), SCALE * INPUT_CIRCLE_RADIUS, 'black', 'yellow')
+        self.draw_ellipse((self.miss.cursor_data[-1][1], self.miss.cursor_data[-1][2]), self.scale * INPUT_CIRCLE_RADIUS, 'black', 'yellow')
 
     def draw_cursor_inputs(self) -> None:
         for time, x, y, input in self.miss.cursor_input_data:
-            self.draw_ellipse((x, y), SCALE * INPUT_CIRCLE_RADIUS, 'blue',)
+            self.draw_ellipse((x, y), self.scale * INPUT_CIRCLE_RADIUS, 'blue',)
 
     def draw_lines(self, points: list, color: str, line_width = 0) -> None:
         transformed_points = [(self.canvas_x(x), self.canvas_y(y)) for x, y in points]
@@ -59,13 +59,11 @@ class Canvas:
         point_coordinates = [(transformed_point[0] - circle_radius, transformed_point[1] - circle_radius), (transformed_point[0] + circle_radius, transformed_point[1] + circle_radius)]
         self.draw.ellipse(point_coordinates, outline = border_color, fill = fill_color) 
 
-    @staticmethod
-    def canvas_x(x: str) -> int:
-        return SCALE * (int(x) - 0.5 * PLAYFIELD_WIDTH) + 0.5 * WINDOW_WIDTH
+    def canvas_x(self, x: str) -> int:
+        return self.scale * (int(x) - 0.5 * PLAYFIELD_WIDTH) + 0.5 * self.width
 
-    @staticmethod
-    def canvas_y(y: str) -> int:
-        return SCALE * (int(y) - 0.5 * PLAYFIELD_HEIGHT) + 0.5 * WINDOW_HEIGHT
+    def canvas_y(self, y: str) -> int:
+        return self.scale * (int(y) - 0.5 * PLAYFIELD_HEIGHT) + 0.5 * self.height
     
     def export_canvas(self, directory: str, output_file: int) -> None:
         self.image.save(f'{directory}\\{output_file:06}.png')
