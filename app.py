@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFileDialog, QGraphicsPixmapItem
 from PyQt5.QtGui import QIcon, QPixmap, QFont
-from PyQt5 import uic, QtCore
+from PyQt5 import QtCore
 
 from settings import Settings
 from data import Data
@@ -50,6 +50,7 @@ class Window(QWidget):
         self.update_timing_count()
 
         self.status = QLabel()
+        self.status.setText('No replay selected')
         self.status.setAlignment(QtCore.Qt.AlignCenter)
 
         buttons_layout.addWidget(self.select_replay_button, 1)
@@ -136,20 +137,20 @@ class Window(QWidget):
         if self.file_number == -1:
             self.break_label.setText('')
         else:
-            self.break_label.setText(f'Break: {str(self.file_number+1)}/{str(self.max_file_number+1)}')
+            self.break_label.setText(f'Miss: {str(self.file_number+1)}/{str(self.max_file_number+1)}')
 
     def update_timing_count(self) -> None:
         if self.file_number == -1:
             self.timing_label.setText('')
         else:
-            self.timing_label.setText(f'Timing: {self.convert_milliseconds(self.miss_timings[self.file_number])}')
+            self.timing_label.setText(f'Time: {self.convert_milliseconds(self.miss_timings[self.file_number])}')
 
     @staticmethod
     def convert_milliseconds(ms: int) -> str:
+        milliseconds = ms % 1000
         seconds = int((ms / 1000) % 60)
-        minutes = int((ms / (1000 * 60)) % 60)
-        hours = int((ms / (1000 * 60 * 60)) % 24)
-        return f'{hours:02}:{minutes:02}:{seconds:02}'
+        minutes = int(ms / (1000 * 60))
+        return f'{minutes:02}:{seconds:02}.{milliseconds:03}'
 
 if __name__ == '__main__':
     app = QApplication([])
