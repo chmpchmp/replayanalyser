@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFileDialog, QGraphicsPixmapItem
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5 import QtCore
 
@@ -24,7 +24,7 @@ class Window(QWidget):
         buttons_layout = QVBoxLayout()
 
         self.beatmap_title = QLabel()
-        #self.beatmap_title.setFont(QFont('Aller Bold', 12))
+        self.beatmap_title.setFont(QFont('Arial Bold', 12))
 
         self.image = QLabel()
         self.image.setPixmap(QPixmap())
@@ -54,11 +54,12 @@ class Window(QWidget):
         self.status.setAlignment(QtCore.Qt.AlignCenter)
 
         buttons_layout.addWidget(self.select_replay_button, 1)
+        buttons_layout.addWidget(QLabel(), 5)
         buttons_layout.addWidget(self.previous_frame_button, 1)
         buttons_layout.addWidget(self.next_frame_button, 1)
         buttons_layout.addWidget(self.break_label, 1)
         buttons_layout.addWidget(self.timing_label, 1)
-        buttons_layout.addWidget(QLabel(), 20)
+        buttons_layout.addWidget(QLabel(), 40)
 
         core_layout.addLayout(buttons_layout, 10)
         core_layout.addWidget(self.image, 90)
