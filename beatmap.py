@@ -14,7 +14,7 @@ class Beatmap:
         self.cursor_data = self.calculate_cursor_timings(self.replay.replay_data)
         self.data = self.fetch_beatmap_data(settings.api_key, self.replay.beatmap_hash)
         self.directory = self.find_beatmap_directory(songs_directory, self.data['beatmapset_id'])
-        self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'])
+        self.difficulty_data = self.fetch_difficulty_data(self.directory, self.data['beatmap_id'], self.data['artist'], self.data['title'], self.data['version'])
         self.hit_object_data = self.fetch_hit_object_data(self.difficulty_data, int(self.replay.mods_used))
         self.stack_leniency = self.fetch_stack_leniency(self.difficulty_data)
         self.circle_radius = self.calculate_circle_radius(float(self.data['diff_size']), int(self.replay.mods_used))
@@ -70,15 +70,15 @@ class Beatmap:
         raise DirectoryError('Beatmap of replay could not be found in songs directory')
     
     @staticmethod
-    def fetch_difficulty_data(beatmap_directory: str, beatmap_id: str) -> str:
+    def fetch_difficulty_data(beatmap_directory: str, beatmap_id: str, artist: str, title: str, difficulty_name: str) -> str:
         for file_name in os.listdir(beatmap_directory):
             if file_name.endswith('.osu'):
                 file = open(pathlib.Path(f'{beatmap_directory}\\{file_name}'), encoding = 'utf-8')
                 data = file.read()
-                for line in data.split('\n'):
-                    if line == f'BeatmapID:{beatmap_id}':
-                        file.close()
-                        return data
+
+                if f'BeatmapID:{beatmap_id}' in data.split('\n') and f'Artist:{artist}' in data.split('\n') and f'Title:{title}' in data.split('\n') and f'Version:{difficulty_name}' in data.split('\n'):
+                    file.close()
+                    return data
                     
                 file.close()
 
