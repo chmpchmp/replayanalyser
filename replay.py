@@ -75,7 +75,7 @@ class Replay:
 
         return output
     
-    def decode_replay_data(self, byte_length: int) -> list(list()):
+    def decode_replay_data(self, byte_length: int) -> list:
         # remove informational frames
         return self.decode_lzma(byte_length).split(',')[1:-2]
     

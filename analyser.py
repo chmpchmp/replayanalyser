@@ -59,7 +59,7 @@ class Analyser:
 
         return miss_data
 
-    def fetch_active_cursor_points(self, cursor_timings: list(list())) -> list(list()):
+    def fetch_active_cursor_points(self, cursor_timings: list) -> list:
         active_cursor_points = []
 
         for i in range(len(cursor_timings)-1):
@@ -84,7 +84,7 @@ class Analyser:
         self.break_count += 1
     
     @staticmethod
-    def in_interval(value: int, intervals: list(list())) -> bool:
+    def in_interval(value: int, intervals: list) -> bool:
         for interval in intervals:
             if interval[0] <= value <= interval[1]:
                 return True

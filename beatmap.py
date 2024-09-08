@@ -38,7 +38,7 @@ class Beatmap:
         raise GameModeError('Game mode of the replay file is not osu!standard')
     
     @staticmethod
-    def calculate_cursor_timings(cursor_data: list(list())) -> list(list()):
+    def calculate_cursor_timings(cursor_data: list) -> list:
         cursor_timings = []
         
         ms_interval = 0
@@ -157,7 +157,7 @@ class Beatmap:
         return hit_window_function(overall_difficulty)
     
     @staticmethod
-    def fetch_break_windows(difficulty_data: str, cursor_data: list(list()), hit_object_data: list(list()), hit_window) -> list(list()):
+    def fetch_break_windows(difficulty_data: str, cursor_data: list, hit_object_data: list, hit_window) -> list:
         break_windows = [window.split(',')[1:] for window in difficulty_data.split('//Break Periods')[1].split('//Storyboard Layer 0 (Background)')[0].split('\n')[1:-1]]
 
         for i in range(len(break_windows)):
