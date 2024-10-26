@@ -33,11 +33,11 @@ class Window(QWidget):
         self.select_replay_button = QPushButton('Select replay')
         self.select_replay_button.clicked.connect(self.select_replay_clicker)
 
-        self.previous_frame_button = QPushButton('Previous frame')
+        self.previous_frame_button = QPushButton('Previous miss')
         self.previous_frame_button.clicked.connect(self.select_previous_frame)
         self.previous_frame_button.setEnabled(False)
 
-        self.next_frame_button = QPushButton('Next frame')
+        self.next_frame_button = QPushButton('Next miss')
         self.next_frame_button.clicked.connect(self.select_next_frame)
         self.next_frame_button.setEnabled(False)
 
